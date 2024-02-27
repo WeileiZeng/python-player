@@ -1,5 +1,5 @@
 env:
-	python3 -m venv env-project
+	python3 -m venv env
 
 
 # SusTech pip mirror
