@@ -1,2 +1,3 @@
+py	=./env/bin/python
 run:
-	python3 flipit.py
+	$(py) flipit.py
