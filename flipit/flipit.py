@@ -159,7 +159,7 @@ class Board():
             for j in range(self.cols):
                 b=self.buttons[i][j]
                 if s3[i][j]:
-                    b.rect.setWidth(5)
+                    b.rect.setWidth(3)
                 else:
                     b.rect.setWidth(1)        
 
@@ -189,6 +189,7 @@ def main():
 
     #board = Board(win,5,6) #solution: pish to right, then duplicate the right col on the left
     board = Board(win,10,12)
+    #board = Board(win,20,24)
 
 
     docstr='Click on a plaquette, its neighbors will get flipped, as well as itself. Try to flip all plaquettes!'
