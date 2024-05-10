@@ -6,10 +6,10 @@ from button import Button
 import random
 import time
 
-def get_beighbors(rows,cols,board):    
-        neighbors=[]
-        #placeholder=[[1 for _ in range(cols)] for _ in range(rows)]
-        for i in range(rows):
+def get_beighbors(rows,cols,board):
+    neighbors=[]
+    #placeholder=[[1 for _ in range(cols)] for _ in range(rows)]
+    for i in range(rows):
             _=[]
             for j in range(cols):
                 neighbor=[(i,j),(i+1,j),(i-1,j),(i,j+1),(i,j-1)]
@@ -34,7 +34,28 @@ def get_beighbors(rows,cols,board):
                         #print(neighbor)
                 _.append(neighbor)
             neighbors.append(_)
-        return neighbors
+    return neighbors
+
+import numpy as np
+
+def ij2index(i,j,rows,cols):
+    return i*cols+j
+#there are multiple ways to get S
+def get_H(neighbors,rows,cols):
+    H_size = rows*cols
+    H = np.zeros((H_size,H_size), dtype=int)
+    print(H)
+    for i in range(rows):
+        for j in range(cols):
+            index_i = ij2index(i,j,rows,cols)
+            neighbor = neighbors[i][j]
+            #for neighbor in neighbors:
+            for n in neighbor:
+                x,y=n
+                index_j = ij2index(x,y,rows,cols)
+                H[index_i][index_j]=1
+    return H
+
 class Board():
     def __init__(self,win,rows,cols):
         self.win=win
@@ -67,24 +88,33 @@ class Board():
         self.win.flush()
 
         self.neighbors=get_beighbors(rows,cols,self.board)   
-            
+
+        self.H=get_H(self.neighbors,self.rows,self.cols)
+        print(self.H)
+        e=np.zeros(self.rows*self.cols,int)
+        e[0]=1
+        print('error',e)
+        print(self.H.dot(e.transpose()))
+
+        self.push2right()
+        self.solve()
         
     def flip(self,r,c):
         #self.autoflush=False
         # if (r,c) gets clicked
         neighbor = self.neighbors[r][c]
-        print('the neighbor for ',r,c,'is',neighbor)
+        #print('the neighbor for ',r,c,'is',neighbor)
         #flip all neighbors
         for n in neighbor:
             i,j=n
-            print('now check neighbor',i,j)
+            #print('now check neighbor',i,j)
             if self.board[i][j] == 1:
                 self.board[i][j] = 0
                 self.buttons[i][j].rect.setFill('lightgray')
             else:
                 self.board[i][j] = 1
                 self.buttons[i][j].rect.setFill('green')
-        self.print()
+        #self.print()
         #self.autoflush=True
                 
     def print(self):
@@ -110,7 +140,41 @@ class Board():
                     
         #self.autoflush=True
     def solve(self):#run it after push
-        pass
+        #e=np.zeros(self.rows*self.cols,int)
+        e_array=np.array(self.board)
+        e = np.hstack(e_array)
+        print(self.H)
+        print('current error',e)
+        s=np.linalg.solve(self.H,e)
+        print(s)
+
+        import galois
+        def binary_solve(A,b):
+            GF = galois.GF(2)
+            #A = GF.Random((4,4))
+            A=GF(A)
+            #print(A)
+            b=GF(b)
+            #x_truth = GF([1,0,1,1])    
+            #b = A @ x_truth
+            x = np.linalg.solve(A, b)
+            #np.array_equal(x, x_truth)
+            return x 
+
+        s2=binary_solve(self.H,e)
+        print('attemplt solution',s2)
+        s3=s2.reshape(self.rows,self.cols)
+        print(s3)
+        print('rank of H is ',np.linalg.matrix_rank(self.H))
+        #print in color
+        for i in range(self.rows):
+            for j in range(self.cols):
+                b=self.buttons[i][j]
+                if s3[i][j]:
+                    b.rect.setWidth(5)
+                else:
+                    b.rect.setWidth(1)
+        
 
     def shuffle(self):#generate random board and update all buttons
         #self.win.autoflush=False
@@ -134,9 +198,11 @@ def main():
     button_push.activate()
     button_shuffle = Button(win, center=Point(60,120), width=100, height=30, label="shuffle")
     button_shuffle.activate()
+    button_solve = Button(win, center=Point(60,180), width=100, height=30, label="solve")
+    button_solve.activate()
 
-    board = Board(win,5,6) #solution: pish to right, then duplicate the right col on the left
-    #board = Board(win,10,12)
+    #board = Board(win,5,6) #solution: pish to right, then duplicate the right col on the left
+    board = Board(win,10,12)
 
 
     docstr='Click on a plaquette, its neighbors will get flipped, as well as itself. Try to flip all plaquettes!'
@@ -148,17 +214,20 @@ def main():
     board.win.autoflush=False
     while (True):
         p = win.getMouse()
-        print('clicked on ',p)
+        #print('clicked on ',p)
         if button_push.clicked(p):            
-            print('push')
+            #print('push')
             board.push2right()
         elif button_shuffle.clicked(p):
             board.shuffle()
+        elif button_solve.clicked(p):
+            board.solve()
+
         for bs in board.buttons:
             for b in bs:
                 #print('now check button',b)
                 if b.clicked(p):
-                    print('clicked on ',b,b.label,b.i,b.j)
+                    #print('clicked on ',b,b.label,b.i,b.j)
                     board.flip(b.i,b.j)
 
         board.win.flush()
