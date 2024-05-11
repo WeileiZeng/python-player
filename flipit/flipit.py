@@ -186,6 +186,8 @@ def main():
     button_shuffle.activate()
     button_solve = Button(win, center=Point(60,180), width=100, height=30, label="solve")
     button_solve.activate()
+    button_exit = Button(win, center=Point(60,240), width=100, height=30, label="exit")
+    button_exit.activate()
 
     #board = Board(win,5,6) #solution: pish to right, then duplicate the right col on the left
     board = Board(win,10,12)
@@ -209,7 +211,9 @@ def main():
             board.shuffle()
         elif button_solve.clicked(p):
             board.solve()
-
+        elif button_exit.clicked(p):
+            win.close()
+            break
         for bs in board.buttons:
             for b in bs:
                 #print('now check button',b)
@@ -218,5 +222,6 @@ def main():
                     board.flip(b.i,b.j)
 
         board.win.flush()
-
+    print('Exit from the game.')
+        
 main()
