@@ -7,9 +7,9 @@ from button import Button
 import random
 import time
 import numpy as np
+import galois  #for solving binary equations Ax=b
 
 #config
-
 ROWS,COLS=5,6
 
 
@@ -97,6 +97,7 @@ class Board():
         #self.neighbors=get_neighbors(rows,cols,self.board)
         self.neighbors=get_neighbors(rows,cols)   
         self.H=get_H(self.neighbors,self.rows,self.cols)
+        self.solution=None
 
         #self.push2right()
         #self.solve()
@@ -136,7 +137,7 @@ class Board():
                     self.win.flush()
                     #time.sleep(0.1)
                     
-    def solve(self):# solve it using linear algebra
+    def solve(self):# solve it using linear algebra. The solution will be hinted by bold rect boarder
         e_array=np.array(self.board)
         print('current error\n',e_array)
         e = np.hstack(e_array)
@@ -145,7 +146,6 @@ class Board():
         s=np.linalg.solve(self.H,e)
         #print(s)
 
-        import galois
         def binary_solve(A,b):
             GF = galois.GF(2)            #A = GF.Random((4,4))
             A=GF(A)
@@ -156,6 +156,7 @@ class Board():
         s2=binary_solve(self.H,e)
         #print('attemplt solution',s2)
         s3=s2.reshape(self.rows,self.cols)
+        self.solution=s3
         print('solution:\n',s3)
         #print('rank of H is ',np.linalg.matrix_rank(self.H))
         #display in color
@@ -168,6 +169,7 @@ class Board():
                     b.rect.setWidth(0)        
 
     def shuffle(self):#generate random board and update all buttons
+        self.solution=None
         self.board = [[random.randint(0,1) for _ in range(self.cols)] for _ in range(self.rows)]
         for i in range(self.rows):
             for j in range(self.cols):
@@ -177,7 +179,14 @@ class Board():
                     b.rect.setFill('green')
                 else:
                     b.rect.setFill('lightgray')                    
-        
+    def flip_first_col(self): #flip the first column according to the solution
+        print(type(self.solution))
+        if type(self.solution)==galois.GF(2):
+            for i in range(self.rows):
+                if self.solution[i][0]:
+                    self.flip(i,0)                
+        else:
+            print('currently no solution')   
 def main():
     win_width, win_height=1200,700+40
     img_width,img_height=win_width, win_height
@@ -191,7 +200,9 @@ def main():
     button_shuffle.activate()
     button_solve = Button(win, center=Point(60,180), width=100, height=30, label="solve")
     button_solve.activate()
-    button_exit = Button(win, center=Point(60,240), width=100, height=30, label="exit")
+    button_flip_first_col = Button(win, center=Point(60,240), width=100, height=30, label="Flip first column")
+    button_flip_first_col.activate()
+    button_exit = Button(win, center=Point(60,300), width=100, height=30, label="exit")
     button_exit.activate()
 
     win.flush()
@@ -218,6 +229,9 @@ def main():
             board.shuffle()
         elif button_solve.clicked(p):
             board.solve()
+        elif button_flip_first_col.clicked(p):
+            board.flip_first_col()
+        
         elif button_exit.clicked(p):
             win.close()
             break
