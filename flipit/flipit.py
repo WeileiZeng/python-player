@@ -13,7 +13,7 @@ import numpy as np
 ROWS,COLS=5,6
 
 
-def get_neighbors(rows,cols,board):
+def get_neighbors(rows,cols):    
     #return neighbors of each plaquette. This takes care of the boundary condition
     neighbors=[]
     #placeholder=[[1 for _ in range(cols)] for _ in range(rows)]
@@ -22,56 +22,25 @@ def get_neighbors(rows,cols,board):
             for j in range(cols):
                 neighbor=[(i,j),(i+1,j),(i-1,j),(i,j+1),(i,j-1)]
                 neighbor_valid = []
-                flag = False
-                if (0,6) in  neighbor:
-                    flag = True
-                    print('now processing for ',i,j,'with neighbor',neighbor)
-                    print("*"*20,'start')
-                    for xy in neighbor:
-                        print(xy)
-                    print("*"*20,'end')
                 for xy in neighbor:
-                    if flag:
-                        print('now processing xy =',xy,neighbor)
                     x,y=xy
-                    if x == 0 and y == 6:
-                        print('before',neighbor)
                     if x < 0 or x > rows-1 or y < 0 or y > cols-1:
-                        #print('remove ',xy,'from',neighbor)
-                        #neighbor.remove(xy)
                         pass
                     else:
                         neighbor_valid.append(xy)
-                    if flag:
-                        print('after',neighbor)
-                print()
-                for xy in neighbor:#double check. very strange, cannot remove (0,6) from last for loop
-                    x,y=xy
-                    try:
-                        board[x][y]
-                        #print(i,jself.board[i][j])
-                    except:
-                        #print(neighbor)
-                        #print(xy,self.cols)
-                        print(x < 0 or x > rows-1 or y < 0 or y > cols-1)
-                        #print(xy,'is out of board')
-                    #if x < 0 or x > self.rows-1 or y < 0 or y > self.cols-1:
-                        print('remove ',xy,'from',neighbor)
-                        neighbor.remove(xy)
-                        #print(neighbor)
                 _.append(neighbor_valid)
             neighbors.append(_)
     return neighbors
 
-
 def get_neighbors_test():
     rows,cols=ROWS,COLS
-    board=[[1 for i in range(COLS)] for j in range(ROWS)]
-    neighbors = get_neighbors(rows,cols,board)
+    #board=[[1 for i in range(COLS)] for j in range(ROWS)]
+    #neighbors = get_neighbors(rows,cols,board)
+    neighbors = get_neighbors(rows,cols)    
     print(neighbors)
     
-get_neighbors_test()
-exit()
+#get_neighbors_test()
+#exit()
 
 
 #convert index of 2D array to that of a horizontally stacked vector
@@ -125,7 +94,8 @@ class Board():
 
         self.win.flush()
 
-        self.neighbors=get_neighbors(rows,cols,self.board)   
+        #self.neighbors=get_neighbors(rows,cols,self.board)
+        self.neighbors=get_neighbors(rows,cols)   
         self.H=get_H(self.neighbors,self.rows,self.cols)
 
         #self.push2right()
