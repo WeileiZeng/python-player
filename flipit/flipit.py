@@ -87,6 +87,7 @@ class Board():
                 button_plaquette.i = i
                 button_plaquette.j = j
                 button_plaquette.rect.setWidth(0)
+                button_plaquette.rect.setOutline('red')
                 #print(button_plaquette.i,button_plaquette.j)
                 if self.board[i][j]:
                     button_plaquette.rect.setFill('green')
