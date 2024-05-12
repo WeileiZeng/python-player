@@ -13,6 +13,19 @@ import galois  #for solving binary equations Ax=b
 ROWS,COLS=5,6
 
 
+class Plaquette(Button):#doesn't seem to make any better by defining this class, compare to use Button itself
+    #def __init__(self, win, center, width, height, label):
+    def __init__(self, win, center, width, height, label):
+        #def __init__(self,x,y):
+        Button.__init__(self, win, center, width, height, label)
+        self.rect.setOutline('red')
+        self.rect.setWidth(0)
+                
+        self.i=None
+        self.j=None
+    def __repr__(self):
+        return "Plaquette({}, {})".format(str(self.i), str(self.j))
+
 def get_neighbors(rows,cols):    
     #return neighbors of each plaquette. This takes care of the boundary condition
     neighbors=[]
@@ -78,23 +91,26 @@ class Board():
         #self.win.autoflush=False #turn it off for quick draw with many changes in the window
         for i in range(self.rows):
             for j in range(self.cols):
-                button_plaquette = Button(self.win,
+                #button_plaquette = Button(self.win,
+                #                          center=Point(x0+(size+distance)*j,y0+(size+distance)*i),
+                #                          width=size, height=size, label=f"({i},{j})")
+                button_plaquette = Plaquette(self.win,
                                           center=Point(x0+(size+distance)*j,y0+(size+distance)*i),
-                                          width=size, height=size, label=f"({i},{j})")
+                                          width=size, height=size, label=f"({i},{j})")                
                 #button_plaquette.face=1
                 button_plaquette.activate()
                 #button_plaquette.face=self.board[i][j]
                 button_plaquette.i = i
                 button_plaquette.j = j
                 button_plaquette.rect.setWidth(0)
-                button_plaquette.rect.setOutline('red')
+                #button_plaquette.rect.setOutline('red')
                 #print(button_plaquette.i,button_plaquette.j)
                 if self.board[i][j]:
                     button_plaquette.rect.setFill('green')
                 self.buttons[i][j] = button_plaquette
 
         self.win.flush()
-
+        
         #self.neighbors=get_neighbors(rows,cols,self.board)
         self.neighbors=get_neighbors(rows,cols)   
         self.H=get_H(self.neighbors,self.rows,self.cols)
