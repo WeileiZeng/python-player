@@ -8,6 +8,10 @@ import random
 import time
 import numpy as np
 
+#config
+
+ROWS,COLS=5,6
+
 
 def get_neighbors(rows,cols,board):
     #return neighbors of each plaquette. This takes care of the boundary condition
@@ -17,11 +21,30 @@ def get_neighbors(rows,cols,board):
             _=[]
             for j in range(cols):
                 neighbor=[(i,j),(i+1,j),(i-1,j),(i,j+1),(i,j-1)]
+                neighbor_valid = []
+                flag = False
+                if (0,6) in  neighbor:
+                    flag = True
+                    print('now processing for ',i,j,'with neighbor',neighbor)
+                    print("*"*20,'start')
+                    for xy in neighbor:
+                        print(xy)
+                    print("*"*20,'end')
                 for xy in neighbor:
+                    if flag:
+                        print('now processing xy =',xy,neighbor)
                     x,y=xy
+                    if x == 0 and y == 6:
+                        print('before',neighbor)
                     if x < 0 or x > rows-1 or y < 0 or y > cols-1:
                         #print('remove ',xy,'from',neighbor)
-                        neighbor.remove(xy)
+                        #neighbor.remove(xy)
+                        pass
+                    else:
+                        neighbor_valid.append(xy)
+                    if flag:
+                        print('after',neighbor)
+                print()
                 for xy in neighbor:#double check. very strange, cannot remove (0,6) from last for loop
                     x,y=xy
                     try:
@@ -30,15 +53,25 @@ def get_neighbors(rows,cols,board):
                     except:
                         #print(neighbor)
                         #print(xy,self.cols)
-                        #print(x < 0 or x > self.rows-1 or y < 0 or y > self.cols-1)
+                        print(x < 0 or x > rows-1 or y < 0 or y > cols-1)
                         #print(xy,'is out of board')
                     #if x < 0 or x > self.rows-1 or y < 0 or y > self.cols-1:
-                        #print('remove ',xy,'from',neighbor)
+                        print('remove ',xy,'from',neighbor)
                         neighbor.remove(xy)
                         #print(neighbor)
-                _.append(neighbor)
+                _.append(neighbor_valid)
             neighbors.append(_)
     return neighbors
+
+
+def get_neighbors_test():
+    rows,cols=ROWS,COLS
+    board=[[1 for i in range(COLS)] for j in range(ROWS)]
+    neighbors = get_neighbors(rows,cols,board)
+    print(neighbors)
+    
+get_neighbors_test()
+exit()
 
 
 #convert index of 2D array to that of a horizontally stacked vector
@@ -73,7 +106,7 @@ class Board():
         self.buttons=[ [None for _ in range(self.cols)] for _ in range(self.rows) ]
         x0,y0=200,40 #top left anchor
         size,distance=60,10 #for each plaquette
-        self.win.autoflush=False #turn it off for quick draw with many changes in the window
+        #self.win.autoflush=False #turn it off for quick draw with many changes in the window
         for i in range(self.rows):
             for j in range(self.cols):
                 button_plaquette = Button(self.win,
@@ -84,6 +117,7 @@ class Board():
                 #button_plaquette.face=self.board[i][j]
                 button_plaquette.i = i
                 button_plaquette.j = j
+                button_plaquette.rect.setWidth(0)
                 #print(button_plaquette.i,button_plaquette.j)
                 if self.board[i][j]:
                     button_plaquette.rect.setFill('green')
@@ -159,16 +193,16 @@ class Board():
             for j in range(self.cols):
                 b=self.buttons[i][j]
                 if s3[i][j]:
-                    b.rect.setWidth(3)
+                    b.rect.setWidth(2)
                 else:
-                    b.rect.setWidth(1)        
+                    b.rect.setWidth(0)        
 
     def shuffle(self):#generate random board and update all buttons
         self.board = [[random.randint(0,1) for _ in range(self.cols)] for _ in range(self.rows)]
         for i in range(self.rows):
             for j in range(self.cols):
                 b=self.buttons[i][j]
-                b.rect.setWidth(1)
+                b.rect.setWidth(0)
                 if self.board[i][j]:
                     b.rect.setFill('green')
                 else:
@@ -178,6 +212,7 @@ def main():
     win_width, win_height=1200,700+40
     img_width,img_height=win_width, win_height
     win = GraphWin('Flip it!', win_width, win_height)
+    win.autoflush=False  #turn off auto flash for quick drawing multuple items. run win.flush() when needed
     win_center=Point(win_width//2,600//2)
 
     button_push = Button(win, center=Point(60,60), width=100, height=30, label="Push to right")
@@ -189,18 +224,20 @@ def main():
     button_exit = Button(win, center=Point(60,240), width=100, height=30, label="exit")
     button_exit.activate()
 
-    #board = Board(win,5,6) #solution: pish to right, then duplicate the right col on the left
-    board = Board(win,10,12)
+    win.flush()
+
+    #board = Board(win,5,6) #special solution: push to right, then duplicate the right col on the left
+    #board = Board(win,10,12)
     #board = Board(win,20,24)
-
-
+    board = Board(win,ROWS,COLS)
+    
     docstr='Click on a plaquette, its neighbors will get flipped, as well as itself. Try to flip all plaquettes!'
     doc=Text(Point(480,win_height-20),docstr)
 #    doc.setText(
     doc.draw(win)
 
-
-    board.win.autoflush=False
+    win.flush()
+    #board.win.autoflush=False
     while (True):
         p = win.getMouse()
         #print('clicked on ',p)
@@ -223,5 +260,5 @@ def main():
 
         board.win.flush()
     print('Exit from the game.')
-        
+
 main()
