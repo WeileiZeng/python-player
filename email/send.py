@@ -31,14 +31,15 @@ def send_text(text):
 
 
     context_ssl = ssl.create_default_context()
-    print(message)
+
     with smtplib.SMTP_SSL(smtp_server, port, context=context_ssl) as server:
         print('login into', sender_email)
         server.login(sender_email, password)
         print('sending to',receiver_email)
         server.sendmail(sender_email, receiver_email, message.as_string() )
     print('finish sending email to',receiver_email ,'with the following text')
-    print(text)
+    print(message)
+    #print(text)
     
 
 if __name__=="__main__":
