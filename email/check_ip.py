@@ -93,7 +93,7 @@ for k in ['ipify_ip','shell_user','shell_hostname','shell_cron_cmd','socket_loca
 
 filename_log='log/'+python_date+'.json'
 with open(filename_log,'w') as f:
-    json.dump(info,f,indent=2)
+    json.dump(data_new,f,indent=2)
     print('write into file',filename_log)
 #filename_old='data-'    
 #os.popen('mv '+filename_current + ' ' + filename_old)
@@ -101,7 +101,7 @@ with open(filename_log,'w') as f:
 #print("date and time =", dt_string)
 
 with open(filename_current,'w') as f:    
-    json.dump(info,f,indent=2)
+    json.dump(data_new,f,indent=2)
     print('write into file',filename_current)
 
 print('done')
