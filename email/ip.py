@@ -1,3 +1,5 @@
+# socket may not return the public ip
+
 ## importing socket module
 import socket
 ## getting the hostname by socket.gethostname() method
@@ -14,6 +16,7 @@ import socket
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("8.8.8.8", 80))
 print(s.getsockname()[0])
+print(s.getsockname())
 s.close()
 
 
