@@ -54,8 +54,9 @@ for k in ['ip','user','hostname','socket_local_ip','socket_public_ip','socket_ho
         print(k,'data changes. do something')
         from send import send_text
         ifconfig = os.popen('ifconfig').read()
-        content=dict(log=k+' changes ',data_old=data_old, data_new=data_new,ifconfig=ifconfig)
+        content=dict(log=k+' changes ',data_old=data_old, data_new=data_new)
         s=json.dumps(content,indent=2)
+        s = s + '\n' + ifconfig
         send_text(s)
         
 #print(data_old)
