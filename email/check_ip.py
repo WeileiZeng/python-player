@@ -88,9 +88,10 @@ for k in ['ipify_ip','shell_user','shell_hostname','shell_cron_cmd','socket_loca
         for i in range(10):
             try:
                 send_text(s,note=' '+socket_hostname+' '+socket_public_ip)
+                print('succeed sending email while i = ',i)
                 break
             except:
-                print(i,'fail, send it again for 10 times')
+                print(i,'/10 fail, send it again')
         break #only send email once
 #print(data_old)
 
