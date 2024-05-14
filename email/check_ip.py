@@ -21,6 +21,7 @@ ipify_ip=os.popen('curl https://api.ipify.org/').read()
 shell_user = os.popen('whoami').read()
 shell_hostname = os.popen('hostname').read()
 shell_date = os.popen('date').read()
+shell_cron_cmd = os.popen('crontab -l |grep check_ip.py').read()
 
 #use socket to get info
 import socket
@@ -48,7 +49,7 @@ python_date = now.strftime("%Y%m%d-%H%M%S")
 
 
 data_new=dict(ipify_ip=ipify_ip,
-              shell_user=shell_user,shell_hostname=shell_hostname,shell_date=shell_date,
+              shell_user=shell_user,shell_hostname=shell_hostname,shell_date=shell_date,shell_cron_cmd=shell_cron_cmd,
               socket_hostname=socket_hostname,socket_local_ip=socket_local_ip,socket_public_ip=socket_public_ip,
               python_date=python_date)
 
