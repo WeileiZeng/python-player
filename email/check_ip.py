@@ -66,7 +66,7 @@ with open(filename_current,'r') as f:
     data_old=json.load(f)
 
 #compare data
-for k in ['ipify_ip','shell_user','shell_hostname','socket_local_ip','socket_public_ip','socket_hostname','python_date','date']:
+for k in ['ipify_ip','shell_user','shell_hostname','shell_cron_cmd','socket_local_ip','socket_public_ip','socket_hostname','python_date']:
     changed=False
     if k not in data_new:
         changed=True
@@ -89,6 +89,7 @@ for k in ['ipify_ip','shell_user','shell_hostname','socket_local_ip','socket_pub
 #print(data_old)
 
 #save data
+#only save after succeeding sendint the email out
 
 filename_log='log/'+python_date+'.json'
 with open(filename_log,'w') as f:
