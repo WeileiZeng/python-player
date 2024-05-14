@@ -85,7 +85,7 @@ for k in ['ipify_ip','shell_user','shell_hostname','shell_cron_cmd','socket_loca
         #s=json.dumps(content,indent=2)
         s = s + '\n' + ifconfig
         send_text(s,note=' '+socket_hostname+' '+socket_public_ip)
-        
+        break #only send email once
 #print(data_old)
 
 #save data
