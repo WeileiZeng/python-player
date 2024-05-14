@@ -13,7 +13,26 @@ user = os.popen('echo $USER').read()
 hostname = os.popen('hostname').read()
 date = os.popen('date').read()
 
-info=dict(ip=ip,user=user,hostname=hostname,date=date)
+import socket
+## getting the hostname by socket.gethostname() method
+socket_hostname = socket.gethostname()
+## getting the IP address using socket.gethostbyname() method
+socket_local_ip = socket.gethostbyname(socket_hostname)
+## printing the hostname and ip_address
+#print("Hostname: ",{hostname})
+#print("IP Address: ",{ip_address})
+
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+socket_public_ip=s.getsockname()[0]
+#print(s.getsockname()[0])
+s.close()
+
+
+
+
+info=dict(ip=ip,user=user,hostname=hostname,date=date,
+          socket_hostname=socket_hostname,socket_local_ip=socket_local_ip,socket_public_ip=socket_public_ip)
 
 print(info)
 
@@ -28,14 +47,14 @@ with open(filename_current,'r') as f:
     data_old=json.load(f)
 
 #compare data
-for k in ['ip','user','hostname','date']:
+for k in ['ip','user','hostname','socket_local_ip','socket_public_ip','socket_hostname','date']:
     if data_old[k] == data_new[k]:
         pass
     else:        
         print(k,'data changes. do something')
         from send import send_text
-        content=dict(log=k+' changes ',data_old=data_old, data_new=data_new)
-        #info['log']=k+' changes'
+        ifconfig = os.popen('ifconfig').read()
+        content=dict(log=k+' changes ',data_old=data_old, data_new=data_new,ifconfig=ifconfig)
         s=json.dumps(content,indent=2)
         send_text(s)
         
