@@ -75,13 +75,14 @@ dt_string = now.strftime("%Y%m%d-%H%M%S")
 filename_log='log/'+dt_string+'.json'
 with open(filename_log,'w') as f:
     json.dump(info,f,indent=2)
-
+    print('write into file',filename_log)
 #filename_old='data-'    
 #os.popen('mv '+filename_current + ' ' + filename_old)
     
 #print("date and time =", dt_string)
 
-with open(filename_current,'w') as f:
+with open(filename_current,'w') as f:    
     json.dump(info,f,indent=2)
+    print('write into file',filename_current)
 
 print('done')
