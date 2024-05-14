@@ -1,0 +1,11 @@
+{
+  "socket_local_ip": "127.0.1.1",
+  "shell_user": "weileizeng\n",
+  "shell_hostname": "Cherenkov\n",
+  "socket_hostname": "Cherenkov",
+  "socket_public_ip": "138.23.11.240",
+  "python_date": "20240514-003647",
+  "ipify_ip": "138.23.11.240",
+  "shell_cron_cmd": "*/5 * * * * cd /home/weileizeng/Documents/GitHub/python-player/email && python3.5 check_ip.py >> run.log 2>&1\n",
+  "shell_date": "Tue May 14 00:36:47 MST 2024\n"
+}
