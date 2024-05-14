@@ -8,7 +8,7 @@ from email.mime.multipart import MIMEMultipart
 print('This script use gmail to send emails. The body can be text or html')
 
 
-def send_text(text):
+def send_text(text,note=''):
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
     sender_email = "ProgressBar20XX@gmail.com"  # Enter your address
@@ -17,7 +17,7 @@ def send_text(text):
     password="kzoyvjckjltatdgt"
 
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Host Info Report"
+    message["Subject"] = "Host Info Report" + note
     message["From"] = sender_email
     message["To"] = receiver_email
 

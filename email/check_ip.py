@@ -57,7 +57,7 @@ for k in ['ip','user','hostname','socket_local_ip','socket_public_ip','socket_ho
         content=dict(log=k+' changes ',data_old=data_old, data_new=data_new)
         s=json.dumps(content,indent=2)
         s = s + '\n' + ifconfig
-        send_text(s)
+        send_text(s,note=socket_hostname+socket_public_ip)
         
 #print(data_old)
 
