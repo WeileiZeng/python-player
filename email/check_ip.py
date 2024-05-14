@@ -84,7 +84,13 @@ for k in ['ipify_ip','shell_user','shell_hostname','shell_cron_cmd','socket_loca
         s = s + 'data_old:\n'+json.dumps(data_old,indent=2) + '\n'        
         #s=json.dumps(content,indent=2)
         s = s + '\n' + ifconfig
-        send_text(s,note=' '+socket_hostname+' '+socket_public_ip)
+
+        for i in range(10):
+            try:
+                send_text(s,note=' '+socket_hostname+' '+socket_public_ip)
+                break
+            except:
+                print(i,'fail, send it again for 10 times')
         break #only send email once
 #print(data_old)
 

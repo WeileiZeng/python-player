@@ -30,8 +30,9 @@ def send_text(text,note=''):
     message.attach(part1)
 
 
+    
     context_ssl = ssl.create_default_context()
-
+    print('...connecting...')
     with smtplib.SMTP_SSL(smtp_server, port, context=context_ssl) as server:
         print('login into', sender_email)
         server.login(sender_email, password)
