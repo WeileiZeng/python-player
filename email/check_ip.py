@@ -10,7 +10,7 @@ import os
 
 ip=os.popen('curl https://api.ipify.org/').read()
 user = os.popen('echo $USER').read()
-hostname = os.popen('echo $HOSTNAME').read()
+hostname = os.popen('hostname').read()
 date = os.popen('date').read()
 
 info=dict(ip=ip,user=user,hostname=hostname,date=date)
