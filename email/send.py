@@ -17,7 +17,7 @@ def send_text(text,note=''):
     password="kzoyvjckjltatdgt"
 
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Host Info Report" + note
+    message["Subject"] = "IP " + note
     message["From"] = sender_email
     message["To"] = receiver_email
 
