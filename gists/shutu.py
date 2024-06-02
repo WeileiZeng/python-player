@@ -67,6 +67,71 @@ def row_lengths(board):
     return left_lengths
 
 #generate the same
+
+def zeros(n):
+    return [0 for _ in range(n)]
+
+def solve_list(lengths):
+    row = zeros(n)
+    num = len(lengths)
+
+    print(lengths)
+    for i in range(num):
+        length = lengths[i]
+        # method get the overlapping
+        #arange from left
+        left_start = 0
+        if i>0:
+            for j in range(i):
+                left_start += lengths[j] + 1                
+        left_end = left_start + length
+
+        
+        #arange from right
+        right_end=n
+        if i < num-1:
+            for j in range(i+1,num):
+                right_end -= lengths[j] + 1
+        right_start = right_end - length
+
+        # check
+        #print(length)
+        #print(left_start,left_end,right_start,right_end)
+        
+        if left_end < right_start:
+            pass
+        else: #get overlapping
+            for j in range(right_start,left_end):
+                row[j] = 1
+    for i in row:
+        if i:            
+            print('assinging 1s:',row, 'when lengths = ',lengths)
+            break
+    return row
+    
+    left = zeros(n)
+    index = 0
+    for length in lengths:
+        for i in range(length):
+            left[index] = 1
+            index +=1
+        index += 1
+
+
+    right = zeros(n)
+    index = n-1
+    lengths.reverse()
+    for length in lengths:
+        for i in range(length):
+            right[index] = 1
+            index -=1
+        index -= 1
+    lengths.reverse()
+
+    print('left: ',left)
+    print('right:',right)        
+
+
 def gen():
     board=[[ random.randint(0,1) for _ in range(n)] for _ in range(n)]
     print_board(board)
@@ -78,12 +143,22 @@ def gen():
     print(top_lengths)
     print_game(board, left_lengths, top_lengths)
 
+    #solve step by step
+    for length in left_lengths:
+        row = solve_list(length)
+        #print(row)
+        input('...')
+        pass
+    
 def solve():
     pass
 def step():
     pass
 
+#from graphics import *
 def main():
+    #win = 
+    
     pass
 
 
