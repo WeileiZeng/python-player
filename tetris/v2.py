@@ -17,6 +17,11 @@ import random
 
 
 
+# CONFIG
+my_BOARD_WIDTH = 10*3
+my_BOARD_HEIGHT = 40
+my_DELAY = 1000
+
 ############################################################
 # BLOCK CLASS
 ############################################################
@@ -31,8 +36,8 @@ class Block(Rectangle):
         in terms of the square grid.
     '''
 
-    BLOCK_SIZE = 30
-    OUTLINE_WIDTH = 3
+    BLOCK_SIZE = 18 #30
+    OUTLINE_WIDTH = 2 #3
 
     def __init__(self, pos, color):
         self.x = pos.x
@@ -480,14 +485,13 @@ class Tetris(object):
     '''
     SHAPES = [I_shape, J_shape, L_shape, O_shape, S_shape, T_shape, Z_shape]
     DIRECTION = {'Left':(-1, 0), 'Right':(1, 0), 'Down':(0, 1)}
-    BOARD_WIDTH = 10*3
-    BOARD_HEIGHT = 20
-   
+    BOARD_WIDTH = my_BOARD_WIDTH
+    BOARD_HEIGHT = my_BOARD_HEIGHT 
  
     def __init__(self, win):
         self.board = Board(win, self.BOARD_WIDTH, self.BOARD_HEIGHT)
         self.win = win
-        self.delay = 1000 # milliseconds
+        self.delay = my_DELAY # milliseconds
 
         # sets up the keyboard events
         # when a key is called the method key_pressed will be called
