@@ -1,4 +1,7 @@
 # graphics.py
+# downloaded from https://github.com/chindesaurus/tetris/blob/master/graphics.py
+# this has been modified for python3, and perhaps more changes has been made. It is not the graphics.py I use
+
 """Simple object oriented graphics library
 
 This library was written by John Zelle for use with the book
