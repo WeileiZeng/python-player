@@ -1,3 +1,4 @@
+
 # https://github.com/chindesaurus/tetris/blob/master/tetris.py
 
 '''
@@ -16,8 +17,8 @@ from graphics import *
 import random
 
 
-
 # CONFIG
+
 my_BOARD_WIDTH = 10*3
 my_BOARD_HEIGHT = 40
 my_DELAY = 1000
@@ -100,6 +101,18 @@ class Shape(object):
         for pos in coords:
             self.blocks.append(Block(pos, color))
 
+        left=10000
+        right=-10000
+        for pos in coords:
+            if pos.x < left:
+                left = pos.x
+            if pos.x > right:
+                right = pos.x
+        p1=Point(left *Block.BLOCK_SIZE + Block.OUTLINE_WIDTH, 0)
+        p2=Point((right+1) * Block.BLOCK_SIZE + Block.OUTLINE_WIDTH, my_BOARD_HEIGHT * Block.BLOCK_SIZE)
+        self.ref_lines=Rectangle(p1,p2)
+        #self.ref_lines.setFill('yellow')
+
 
     def get_blocks(self):
         ''' Returns the list of blocks.
@@ -112,7 +125,8 @@ class Shape(object):
 
             Draws the shape:
             i.e. draws each block.
-        ''' 
+        '''
+        self.ref_lines.draw(win)
         for block in self.blocks:
             block.draw(win)
 
@@ -127,7 +141,7 @@ class Shape(object):
         '''
         for block in self.blocks:
             block.move(dx, dy)
-
+        self.ref_lines.move(dx * (Block.BLOCK_SIZE),0)
 
     def can_move(self, board, dx, dy):
         ''' Parameters: dx - type: int
@@ -590,6 +604,9 @@ class Tetris(object):
                 # add the current shape to the board
                 self.board.add_shape(self.current_shape)
 
+                # undraw the reference line
+                self.current_shape.ref_lines.undraw()
+                
                 # remove completed rows (if any)
                 self.board.remove_complete_rows()
 
