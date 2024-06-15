@@ -347,11 +347,17 @@ class Snake():
                 p4[0] = p3[0] + 1 #add one row
                 p4[1] = p3[1]                
                 if p2[2] !=0:
-                    allowed_directions.remove(-p2[2]) #can not move back immedeately
+                    try:
+                        allowed_directions.remove(-p2[2]) #can not move back immedeately
+                    except:
+                        pass
             else: #move left or right
                 p4[0] = p3[0] #same row
                 p4[1] = p3[1] + p3[2]
-                allowed_directions.remove(-p3[2])   # can not move back
+                try:
+                    allowed_directions.remove(-p3[2])   # can not move back
+                except:
+                    pass
             import random                
             p4[2] = random.choice(allowed_directions)
             return p4
@@ -362,7 +368,7 @@ class Snake():
             empties.append(p[1])
             if p[2] == 0: # if move up, then this row is finished
                 break
-        print(self.snake)
+        #print(self.snake)
         return empties
 
 ############################################################
@@ -466,7 +472,9 @@ class Board(object):
         for x in range(Tetris.BOARD_WIDTH):
             self.grid[x, y].undraw()
             del self.grid[x, y]
-        
+
+
+        #after
  
     def is_row_complete(self, y):        
         ''' Parameter: y - type: int
