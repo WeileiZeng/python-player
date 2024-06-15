@@ -706,6 +706,9 @@ class Tetris(object):
         # center the shape at this point
         point = Point(int(old_div(self.BOARD_WIDTH, 2)), 2)
 
+        ref = shape(point)
+        return ref
+        '''
         if shape == I_shape:
             ref = I_shape(point)
         elif shape == J_shape:
@@ -723,7 +726,7 @@ class Tetris(object):
 
         # return a reference to the new Shape object
         return ref
-     
+        '''
     
     def animate_shape(self):
         ''' Animate the shape - move down at equal intervals
@@ -845,6 +848,7 @@ class Tetris(object):
             elif key == "Up":
                 self.do_rotate()
 
+                
         # pause and unpause the game
         if key == 'p' or key == 'P':
             self.paused = not self.paused
