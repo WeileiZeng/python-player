@@ -93,6 +93,9 @@ class Shape(object):
     '''
 
     def __init__(self, coords, color):
+        #self.coords=coords
+        self.color=color
+        
         self.blocks = []
         self.rotation_dir = -1
         ### A boolean to indicate if a shape shifts rotation direction or not.
@@ -109,12 +112,29 @@ class Shape(object):
                 left = pos.x
             if pos.x > right:
                 right = pos.x
-        p1=Point(left *Block.BLOCK_SIZE + Block.OUTLINE_WIDTH, 0)
-        p2=Point((right+1) * Block.BLOCK_SIZE + Block.OUTLINE_WIDTH, my_BOARD_HEIGHT * Block.BLOCK_SIZE)
-        self.ref_lines=Rectangle(p1,p2)
+        #p1=Point(left *Block.BLOCK_SIZE + Block.OUTLINE_WIDTH, 0)
+        #p2=Point((right+1) * Block.BLOCK_SIZE + Block.OUTLINE_WIDTH, my_BOARD_HEIGHT * Block.BLOCK_SIZE)
+        #self.ref_lines=Rectangle(p1,p2)
         #self.ref_lines.setFill('yellow')
 
 
+                
+    def ref_draw(self,board):
+        #add reference block
+
+        #get coords
+        coords=[]
+        for block in self.blocks:
+            coords.append(Point(block.x,block.y))        
+        self.ref_shape=Shape(coords, self.color)
+        while self.ref_shape.can_move(board, 0, 1):
+            self.ref_shape.move(0, 1)
+        self.ref_shape.draw(board.canvas)
+            
+    def ref_undraw(self):
+        for block in self.ref_shape.blocks:
+            block.undraw()
+    
     def get_blocks(self):
         ''' Returns the list of blocks.
         '''
@@ -127,7 +147,7 @@ class Shape(object):
             Draws the shape:
             i.e. draws each block.
         '''
-        self.ref_lines.draw(win)
+        #self.ref_lines.draw(win)
         for block in self.blocks:
             block.draw(win)
 
@@ -142,7 +162,7 @@ class Shape(object):
         '''
         for block in self.blocks:
             block.move(dx, dy)
-        self.ref_lines.move(dx * (Block.BLOCK_SIZE),0)
+        #self.ref_lines.move(dx * (Block.BLOCK_SIZE),0)
 
     def can_move(self, board, dx, dy):
         ''' Parameters: dx - type: int
@@ -654,8 +674,11 @@ class Tetris(object):
         # set the current shape to a random new shape
         self.current_shape = self.create_new_shape()
 
+        #input()
         # draw the current_shape on the board
         Board.draw_shape(self.board, self.current_shape)
+
+        self.current_shape.ref_draw(self.board)
 
         # the game is initially not paused
         self.paused = False
@@ -739,10 +762,14 @@ class Tetris(object):
                     self.board_move_delay = Tetris.BOARD_MOVE_DELAY
                     self.board.move_up_rows()
                     self.board.create_new_bottom()
+                    self.current_shape.ref_shape.move(0, -1)
                 else:
                     self.board_move_delay -= 1
             else: #left or right
                 self.current_shape.move(x, y)
+                print('left or right')
+                self.current_shape.ref_undraw()
+                self.current_shape.ref_draw(self.board)
 
 
             return True
@@ -756,14 +783,20 @@ class Tetris(object):
                 self.board.add_shape(self.current_shape)
 
                 # undraw the reference line
-                self.current_shape.ref_lines.undraw()
+                #self.current_shape.ref_lines.undraw()
                 
                 # remove completed rows (if any)
                 self.board.remove_complete_rows()
 
+                # clear previous ref
+                self.current_shape.ref_undraw()
                 # update Tetris.current_shape with a new random shape
                 self.current_shape = self.create_new_shape()
 
+                # add new ref
+                self.current_shape.ref_draw(self.board)
+                #self.current_shape.ref_draw(self.board,self.win)
+                
                 # draw the new shape on the board
                 # if not possible, then the game is over
                 if not self.board.draw_shape(self.current_shape):
@@ -776,7 +809,8 @@ class Tetris(object):
             rotates if it can.
         '''
         self.current_shape.rotate(self.board)
-   
+        self.current_shape.ref_undraw()
+        self.current_shape.ref_draw(self.board)
  
     def key_pressed(self, event):
         ''' This function is called when a key is pressed on the keyboard.
