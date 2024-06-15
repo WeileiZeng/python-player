@@ -19,8 +19,8 @@ import random
 
 # CONFIG
 
-my_BOARD_WIDTH = 10*3
-my_BOARD_HEIGHT = 40
+my_BOARD_WIDTH = 10*6
+my_BOARD_HEIGHT = 42
 my_DELAY = 100
 my_BOARD_MOVE_DELAY=20 # the board moves onve in each # timesteps
 
@@ -348,7 +348,9 @@ class Snake():
     def __init__(self,width,length=-1):
         self.width=width #int
         if length==-1:
-            self.length = self.width//2
+            #self.length = self.width//2
+            self.length = 12
+            
         else:
             self.length=length
         self.left = (self.width-self.length)//2
