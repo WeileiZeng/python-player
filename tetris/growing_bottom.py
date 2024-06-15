@@ -553,7 +553,7 @@ class Board(object):
                     while self.can_move(x,yy+1):
                         _delay = 100
                         self.canvas.after(_delay,self.canvas.flush())
-                        print(f'moved {(x,yy)} to {(x,yy+1)}')
+                        #print(f'moved {(x,yy)} to {(x,yy+1)}')
                         block = self.grid[(x, yy)]
                         del self.grid[(x, yy)]
                         block.move(0, 1)
@@ -767,7 +767,6 @@ class Tetris(object):
                     self.board_move_delay -= 1
             else: #left or right
                 self.current_shape.move(x, y)
-                print('left or right')
                 self.current_shape.ref_undraw()
                 self.current_shape.ref_draw(self.board)
 
