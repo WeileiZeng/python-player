@@ -127,6 +127,8 @@ class Shape(object):
         for block in self.blocks:
             coords.append(Point(block.x,block.y))        
         self.ref_shape=Shape(coords, self.color)
+        for block in self.ref_shape.blocks:
+            block.setWidth(Block.OUTLINE_WIDTH*2)
         while self.ref_shape.can_move(board, 0, 1):
             self.ref_shape.move(0, 1)
         self.ref_shape.draw(board.canvas)
@@ -778,6 +780,9 @@ class Tetris(object):
             # if the last failed move was Down
             if direction == 'Down':
 
+                # clear previous ref
+                self.current_shape.ref_undraw()
+                
                 # add the current shape to the board
                 self.board.add_shape(self.current_shape)
 
@@ -787,8 +792,7 @@ class Tetris(object):
                 # remove completed rows (if any)
                 self.board.remove_complete_rows()
 
-                # clear previous ref
-                self.current_shape.ref_undraw()
+
                 # update Tetris.current_shape with a new random shape
                 self.current_shape = self.create_new_shape()
 
