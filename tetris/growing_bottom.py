@@ -153,6 +153,11 @@ class Shape(object):
         for block in self.blocks:
             block.draw(win)
 
+    def undraw(self):
+        for block in self.blocks:
+            block.undraw()
+        self.ref_undraw()
+        #self.ref_shape.undraw()
 
     def move(self, dx, dy):
         ''' Parameters: dx - type: int
@@ -485,14 +490,15 @@ class Board(object):
         # and undraw them
         
         #add animation here
-        delay=5
+        delay=2
         colors=['red','blue','yellow','purple']
         for i in range(1):                
-            for color in colors:
+            for color in colors[:2]:
                 for x in range(Tetris.BOARD_WIDTH):
                     self.grid[x, y].setFill(color)
                     self.canvas.after(delay,self.canvas.flush())
-            
+
+        # delete it
         for x in range(Tetris.BOARD_WIDTH):
             self.grid[x, y].undraw()
             del self.grid[x, y]
@@ -676,7 +682,6 @@ class Tetris(object):
         # set the current shape to a random new shape
         self.current_shape = self.create_new_shape()
 
-        #input()
         # draw the current_shape on the board
         Board.draw_shape(self.board, self.current_shape)
 
@@ -689,7 +694,7 @@ class Tetris(object):
         self.animate_shape()
 
 
-    def create_new_shape(self):
+    def create_new_shape(self,index=-1):
         ''' Return value: type: Shape
             
             Creates a random new shape that is centered
@@ -697,9 +702,10 @@ class Tetris(object):
             Returns the shape.
         '''
 
-        # generate a pseudorandom integer in this range (inclusive)
-        index = random.randint(0, len(Tetris.SHAPES) - 1)
-
+        if index == -1:
+            # generate a pseudorandom integer in this range (inclusive)
+            index = random.randint(0, len(Tetris.SHAPES) - 1)
+            
         # select a shape
         shape = Tetris.SHAPES[index]
 
@@ -836,17 +842,31 @@ class Tetris(object):
 
         if not self.paused:
             # move left, right, and down
-            if key in self.DIRECTION: 
+            #if key in self.DIRECTION: 
+            if key in ['Left','Right']: #not down anymore                
                 self.do_move(key)
-
+            if key == 's': #speed up the game manually
+                for i in range(10):
+                    self.do_move('Down')
+                
             # drop piece
-            elif key == "space":
+            elif key == "Down":
                 while (self.current_shape.can_move(self.board, 0, 1)):
                     self.current_shape.move(0, 1)
 
             # rotate 
             elif key == "Up":
                 self.do_rotate()
+
+            # magic key to get I shape
+            elif key =="m" or key == "space":
+                self.current_shape.undraw()
+                del self.current_shape
+                self.current_shape = self.create_new_shape(0)
+                if not self.board.draw_shape(self.current_shape):
+                    self.board.game_over()
+                self.current_shape.ref_draw(self.board)
+                
 
                 
         # pause and unpause the game
