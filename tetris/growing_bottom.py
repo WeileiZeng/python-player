@@ -133,6 +133,7 @@ class Shape(object):
         self.ref_shape=Shape(coords, self.color)
         for block in self.ref_shape.blocks:
             block.setWidth(Block.OUTLINE_WIDTH*2)
+            block.setFill(None)
         while self.ref_shape.can_move(board, 0, 1):
             self.ref_shape.move(0, 1)
         self.ref_shape.draw(board.canvas)
