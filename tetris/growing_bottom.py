@@ -328,6 +328,7 @@ class Snake():
         self.right = self.left + self.length        
         self.snake=[]
         self.snake=[[0,10,0],[1,10,-1],[1,9,-1],[1,8,-1],[1,7,0]]
+        self.snake=[[0, 10, 0], [1, 10, -1], [1, 9, -1], [1, 8, -1], [1, 7, 0], [2, 7, -1], [2, 6, 0], [3, 6, 0], [4, 6, 1], [4, 7, 0], [5, 7, 0], [6, 7, 1], [6, 8, 0], [7, 8, 0], [8, 8, 0], [9, 8, 0], [10, 8, 0], [11, 8, 1], [11, 9, 1], [11, 10, 0], [12, 10, 1], [12, 11, 0], [13, 11, 0]]
         # (x,y,direction)
         # 0 for up, -1 for left, 1 for right
 
@@ -335,6 +336,13 @@ class Snake():
         def next_point(p2,p3): #get new point based on historical route
             p4=[0,0,0]
             allowed_directions=[-1,0,1]
+
+            # limit the snake in center reigon
+            if p3[1]>self.right:
+                allowed_directions.remove(1)
+            elif p3[1] < self.left:
+                allowed_directions.remove(-1)
+                
             if p3[2] == 0: #move up
                 p4[0] = p3[0] + 1 #add one row
                 p4[1] = p3[1]                
@@ -353,7 +361,8 @@ class Snake():
             self.snake.append(p)
             empties.append(p[1])
             if p[2] == 0: # if move up, then this row is finished
-                break                
+                break
+        print(self.snake)
         return empties
 
 ############################################################
@@ -447,8 +456,8 @@ class Board(object):
         
         #add animation here
         delay=5
-        colors=['red','blue','yellow']
-        for i in range(3):                
+        colors=['red','blue','yellow','purple']
+        for i in range(1):                
             for color in colors:
                 for x in range(Tetris.BOARD_WIDTH):
                     self.grid[x, y].setFill(color)
