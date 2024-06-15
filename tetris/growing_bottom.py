@@ -20,7 +20,7 @@ import random
 # CONFIG
 
 my_BOARD_WIDTH = 10*8
-my_BOARD_HEIGHT = 112
+my_BOARD_HEIGHT = 64 #112
 my_DELAY = 100
 my_BOARD_MOVE_DELAY=20 # the board moves onve in each # timesteps
 
@@ -38,8 +38,8 @@ class Block(Rectangle):
         in terms of the square grid.
     '''
 
-    BLOCK_SIZE = 7 #30
-    OUTLINE_WIDTH = 1 #3
+    BLOCK_SIZE = 12 #7 #30
+    OUTLINE_WIDTH = 2 #1 #3
 
     def __init__(self, pos, color):
         self.x = pos.x
@@ -97,8 +97,8 @@ class Shape(object):
         self.color=color
 
         #use random color
-        colors=['red','blue','yellow','cyan','orange','magenta']
-        self.color=random.choices(colors)
+        #colors=['red','blue','yellow','cyan','orange','magenta']
+        #self.color=random.choices(colors)
         
         self.blocks = []
         self.rotation_dir = -1
@@ -703,7 +703,7 @@ class Tetris(object):
         self.animate_shape()
 
 
-    def create_new_shape(self,index=0): #-1 for random shape, 0 for I shape
+    def create_new_shape(self,index=-1): #-1 for random shape, 0 for I shape
         ''' Return value: type: Shape
             
             Creates a random new shape that is centered
