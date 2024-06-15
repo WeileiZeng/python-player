@@ -314,6 +314,48 @@ class Z_shape(Shape):
 
 
 
+class Snake():
+    '''helper class to generate the bottom row
+       create a connected lines, just like a snake
+    '''
+    def __init__(self,width,length=-1):
+        self.width=width #int
+        if length==-1:
+            self.length = self.width//2
+        else:
+            self.length=length
+        self.left = (self.width-self.length)//2
+        self.right = self.left + self.length        
+        self.snake=[]
+        self.snake=[[0,10,0],[1,10,-1],[1,9,-1],[1,8,-1],[1,7,0]]
+        # (x,y,direction)
+        # 0 for up, -1 for left, 1 for right
+
+    def next(self):
+        def next_point(p2,p3): #get new point based on historical route
+            p4=[0,0,0]
+            allowed_directions=[-1,0,1]
+            if p3[2] == 0: #move up
+                p4[0] = p3[0] + 1 #add one row
+                p4[1] = p3[1]                
+                if p2[2] !=0:
+                    allowed_directions.remove(-p2[2]) #can not move back immedeately
+            else: #move left or right
+                p4[0] = p3[0] #same row
+                p4[1] = p3[1] + p3[2]
+                allowed_directions.remove(-p3[2])   # can not move back
+            import random                
+            p4[2] = random.choice(allowed_directions)
+            return p4
+        empties=[]
+        while True:
+            p = next_point(self.snake[-2],self.snake[-1])            
+            self.snake.append(p)
+            empties.append(p[1])
+            if p[2] == 0: # if move up, then this row is finished
+                break                
+        return empties
+
 ############################################################
 # BOARD CLASS
 ############################################################
@@ -340,6 +382,7 @@ class Board(object):
         # create an empty dictionary
         # currently we have no shapes on the board
         self.grid = {}
+        self.snake=Snake(self.width)
 
 
     def draw_shape(self, shape):
@@ -403,9 +446,9 @@ class Board(object):
         # and undraw them
         
         #add animation here
-        delay=10
+        delay=5
         colors=['red','blue','yellow']
-        for i in range(10):                
+        for i in range(3):                
             for color in colors:
                 for x in range(Tetris.BOARD_WIDTH):
                     self.grid[x, y].setFill(color)
@@ -480,12 +523,15 @@ class Board(object):
     def create_new_bottom(self):
         '''after moving board up, generate a new row in the bottom
         '''
-        for x in range(Tetris.BOARD_WIDTH-1):
-            pos=Point(x,Tetris.BOARD_HEIGHT-1)
-            block=Block(pos, color='yellow')
-            block.draw(self.canvas)
-            self.grid[(pos.x,pos.y)]=block
-            #print(self.grid)
+        empties = self.snake.next()
+        print(empties)
+        for x in range(Tetris.BOARD_WIDTH):
+            if x not in empties:
+                pos=Point(x,Tetris.BOARD_HEIGHT-1)
+                block=Block(pos, color='yellow')
+                block.draw(self.canvas)
+                self.grid[(pos.x,pos.y)]=block
+                #print(self.grid)
             
         
     def remove_complete_rows(self):
