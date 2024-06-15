@@ -401,6 +401,16 @@ class Board(object):
         '''
         # remove all blocks in row y from the grid
         # and undraw them
+        
+        #add animation here
+        delay=10
+        colors=['red','blue','yellow']
+        for i in range(10):                
+            for color in colors:
+                for x in range(Tetris.BOARD_WIDTH):
+                    self.grid[x, y].setFill(color)
+                    self.canvas.after(delay,self.canvas.flush())
+            
         for x in range(Tetris.BOARD_WIDTH):
             self.grid[x, y].undraw()
             del self.grid[x, y]
