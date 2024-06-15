@@ -95,6 +95,10 @@ class Shape(object):
     def __init__(self, coords, color):
         #self.coords=coords
         self.color=color
+
+        #use random color
+        colors=['red','blue','yellow','cyan','orange','magenta']
+        self.color=random.choices(colors)
         
         self.blocks = []
         self.rotation_dir = -1
@@ -103,7 +107,7 @@ class Shape(object):
         self.shift_rotation_dir = False
         
         for pos in coords:
-            self.blocks.append(Block(pos, color))
+            self.blocks.append(Block(pos, self.color))
 
         left=10000
         right=-10000
@@ -493,12 +497,13 @@ class Board(object):
         # and undraw them
         
         #add animation here
-        delay=2
+        delay=1
         colors=['red','blue','yellow','purple']
         for i in range(1):                
             for color in colors[:2]:
                 for x in range(Tetris.BOARD_WIDTH):
                     self.grid[x, y].setFill(color)
+                    #self.canvas.flush() #no delay for fast animation
                     self.canvas.after(delay,self.canvas.flush())
 
         # delete it
@@ -697,7 +702,7 @@ class Tetris(object):
         self.animate_shape()
 
 
-    def create_new_shape(self,index=-1):
+    def create_new_shape(self,index=0): #-1 for random shape, 0 for I shape
         ''' Return value: type: Shape
             
             Creates a random new shape that is centered
@@ -716,6 +721,8 @@ class Tetris(object):
         point = Point(int(old_div(self.BOARD_WIDTH, 2)), 2)
 
         ref = shape(point)
+        if index == 0:
+            ref.rotate(self.board)
         return ref
         '''
         if shape == I_shape:
