@@ -22,6 +22,7 @@ import random
 my_BOARD_WIDTH = 10*3
 my_BOARD_HEIGHT = 40
 my_DELAY = 1000
+my_BOARD_MOVE_DELAY=2 # the board moves onve in each # timesteps
 
 ############################################################
 # BLOCK CLASS
@@ -458,14 +459,25 @@ class Board(object):
                 save it in a new grid
                 replace self.grid by the new grid
         '''
+        new_grid={}
         for x,y in self.grid:
-            new_grid={}
             block = self.grid[(x, y)]
-            block.move(0, 1)
-            new_grid[(x, y + 1)] = block
-            del self.grid
-            self.grid = new_grid            
-                    
+            block.move(0, -1)
+            new_grid[(x, y - 1)] = block
+        #del self.grid
+        self.grid = new_grid            
+
+    def create_new_bottom(self):
+        '''after moving board up, generate a new row in the bottom
+        '''
+        for x in range(Tetris.BOARD_WIDTH-1):
+            pos=Point(x,Tetris.BOARD_HEIGHT-1)
+            block=Block(pos, color='yellow')
+            block.draw(self.canvas)
+            self.grid[(pos.x,pos.y)]=block
+            #print(self.grid)
+            
+        
     def remove_complete_rows(self):
         ''' Removes all the complete rows
             1. for each row, y, 
@@ -516,11 +528,13 @@ class Tetris(object):
     DIRECTION = {'Left':(-1, 0), 'Right':(1, 0), 'Down':(0, 1)}
     BOARD_WIDTH = my_BOARD_WIDTH
     BOARD_HEIGHT = my_BOARD_HEIGHT 
- 
+    BOARD_MOVE_DELAY = my_BOARD_MOVE_DELAY
+    
     def __init__(self, win):
         self.board = Board(win, self.BOARD_WIDTH, self.BOARD_HEIGHT)
         self.win = win
         self.delay = my_DELAY # milliseconds
+        self.board_move_delay = Tetris.BOARD_MOVE_DELAY
 
         # sets up the keyboard events
         # when a key is called the method key_pressed will be called
@@ -554,7 +568,7 @@ class Tetris(object):
         shape = Tetris.SHAPES[index]
 
         # center the shape at this point
-        point = Point(int(old_div(self.BOARD_WIDTH, 2)), 0)
+        point = Point(int(old_div(self.BOARD_WIDTH, 2)), 2)
 
         if shape == I_shape:
             ref = I_shape(point)
@@ -609,9 +623,16 @@ class Tetris(object):
         # move the shape (if possible)
         if self.current_shape.can_move(self.board, x, y):
             if direction == 'Down':
-                pass
-            else:
+                # move board up
+                if self.board_move_delay < 1:
+                    self.board_move_delay = Tetris.BOARD_MOVE_DELAY
+                    self.board.move_up_rows()
+                    self.board.create_new_bottom()
+                else:
+                    self.board_move_delay -= 1
+            else: #left or right
                 self.current_shape.move(x, y)
+
 
             return True
 
