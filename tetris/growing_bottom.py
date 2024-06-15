@@ -529,6 +529,8 @@ class Board(object):
                 if (x,yy) in self.grid:
                     #move it down
                     while self.can_move(x,yy+1):
+                        _delay = 100
+                        self.canvas.after(_delay,self.canvas.flush())
                         print(f'moved {(x,yy)} to {(x,yy+1)}')
                         block = self.grid[(x, yy)]
                         del self.grid[(x, yy)]
