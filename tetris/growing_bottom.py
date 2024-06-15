@@ -332,6 +332,8 @@ class Snake():
         # (x,y,direction)
         # 0 for up, -1 for left, 1 for right
 
+        print(f'Snake: left {self.left} right {self.right}, width {self.width}')
+
     def next(self):
         def next_point(p2,p3): #get new point based on historical route
             p4=[0,0,0]
@@ -540,14 +542,19 @@ class Board(object):
                         
 
     def collapse_row(self,y):
-        
+        start_collapse=False
         #after deleting the row, in the following row, find a column to collapse
         if y < self.height: #can not do for bottom row
                 for x in range(self.width):
                     if (x,y) not in self.grid:
                         #found empty location,
                         self.collapse_column(x,y)
-                        break # only collapse for once
+                        start_collapse=True
+                        #break # only collapse for once
+                    else: # only continue collapsing for neighboring empty sites, and stops once reace an actual block
+                        if start_collapse==True:
+                            break
+                        
 
                    
     def move_up_rows(self):
