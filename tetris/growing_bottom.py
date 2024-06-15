@@ -20,7 +20,7 @@ import random
 # CONFIG
 
 my_BOARD_WIDTH = 10*8
-my_BOARD_HEIGHT = 46
+my_BOARD_HEIGHT = 112
 my_DELAY = 100
 my_BOARD_MOVE_DELAY=20 # the board moves onve in each # timesteps
 
@@ -38,8 +38,8 @@ class Block(Rectangle):
         in terms of the square grid.
     '''
 
-    BLOCK_SIZE = 16 #30
-    OUTLINE_WIDTH = 2 #3
+    BLOCK_SIZE = 7 #30
+    OUTLINE_WIDTH = 1 #3
 
     def __init__(self, pos, color):
         self.x = pos.x
@@ -354,7 +354,7 @@ class Snake():
         self.width=width #int
         if length==-1:
             #self.length = self.width//2
-            self.length = 12
+            self.length = 8
             
         else:
             self.length=length
@@ -501,7 +501,7 @@ class Board(object):
         delay=1
         colors=['red','blue','yellow','purple']
         for i in range(1):                
-            for color in colors[:2]:
+            for color in colors[:1]:
                 for x in range(Tetris.BOARD_WIDTH):
                     self.grid[x, y].setFill(color)
                     #self.canvas.flush() #no delay for fast animation
@@ -568,7 +568,7 @@ class Board(object):
                 if (x,yy) in self.grid:
                     #move it down
                     while self.can_move(x,yy+1):
-                        _delay = 20
+                        _delay = 5
                         self.canvas.after(_delay,self.canvas.flush())
                         #print(f'moved {(x,yy)} to {(x,yy+1)}')
                         block = self.grid[(x, yy)]
@@ -886,7 +886,10 @@ class Tetris(object):
         # pause and unpause the game
         if key == 'p' or key == 'P':
             self.paused = not self.paused
-
+            if self.paused:
+                self.win.title('Tetris  Paused')
+            else:
+                self.win.title('Tetris')
        
 ################################################################
 # Start the game
