@@ -19,8 +19,8 @@ import random
 
 # CONFIG
 
-my_BOARD_WIDTH = 10*6
-my_BOARD_HEIGHT = 42
+my_BOARD_WIDTH = 10*8
+my_BOARD_HEIGHT = 46
 my_DELAY = 100
 my_BOARD_MOVE_DELAY=20 # the board moves onve in each # timesteps
 
@@ -38,7 +38,7 @@ class Block(Rectangle):
         in terms of the square grid.
     '''
 
-    BLOCK_SIZE = 18 #30
+    BLOCK_SIZE = 16 #30
     OUTLINE_WIDTH = 2 #3
 
     def __init__(self, pos, color):
@@ -358,6 +358,7 @@ class Snake():
         self.snake=[]
         self.snake=[[0,10,0],[1,10,-1],[1,9,-1],[1,8,-1],[1,7,0]]
         self.snake=[[0, 10, 0], [1, 10, -1], [1, 9, -1], [1, 8, -1], [1, 7, 0], [2, 7, -1], [2, 6, 0], [3, 6, 0], [4, 6, 1], [4, 7, 0], [5, 7, 0], [6, 7, 1], [6, 8, 0], [7, 8, 0], [8, 8, 0], [9, 8, 0], [10, 8, 0], [11, 8, 1], [11, 9, 1], [11, 10, 0], [12, 10, 1], [12, 11, 0], [13, 11, 0]]
+        self.snake=[[46, 38, 1], [46, 39, 1], [46, 40, 0], [47, 40, 0], [48, 40, -1], [48, 39, -1], [48, 38, 0], [49, 38, 0], [50, 38, 1], [50, 39, 0]]
         # (x,y,direction)
         # 0 for up, -1 for left, 1 for right
 
@@ -399,7 +400,7 @@ class Snake():
             empties.append(p[1])
             if p[2] == 0: # if move up, then this row is finished
                 break
-        #print(self.snake)
+        print(self.snake)
         return empties
 
 ############################################################
@@ -561,7 +562,7 @@ class Board(object):
                 if (x,yy) in self.grid:
                     #move it down
                     while self.can_move(x,yy+1):
-                        _delay = 100
+                        _delay = 20
                         self.canvas.after(_delay,self.canvas.flush())
                         #print(f'moved {(x,yy)} to {(x,yy+1)}')
                         block = self.grid[(x, yy)]
