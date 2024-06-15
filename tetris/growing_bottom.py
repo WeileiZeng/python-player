@@ -400,7 +400,7 @@ class Snake():
             empties.append(p[1])
             if p[2] == 0: # if move up, then this row is finished
                 break
-        print(self.snake)
+        #print(self.snake)
         return empties
 
 ############################################################
@@ -850,6 +850,9 @@ class Tetris(object):
                 self.do_move(key)
             if key == 's': #speed up the game manually
                 for i in range(10):
+                    self.do_move('Down')
+            if key == 'a': #more speed up the game manually
+                for i in range(100):
                     self.do_move('Down')
                 
             # drop piece
