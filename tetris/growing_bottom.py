@@ -474,7 +474,7 @@ class Board(object):
             del self.grid[x, y]
 
 
-        #after
+        
  
     def is_row_complete(self, y):        
         ''' Parameter: y - type: int
@@ -520,6 +520,31 @@ class Board(object):
     
                     # place block back in the grid in the new position
                     self.grid[(x, y + 1)] = block
+
+
+                    
+    def collapse_column(self,x,y):
+            for i in range(y):
+                yy = y-i  #check from this row and up
+                if (x,yy) in self.grid:
+                    #move it down
+                    while self.can_move(x,yy+1):
+                        print(f'moved {(x,yy)} to {(x,yy+1)}')
+                        block = self.grid[(x, yy)]
+                        del self.grid[(x, yy)]
+                        block.move(0, 1)
+                        self.grid[(x, yy + 1)] = block
+                        yy = yy+1
+                        
+
+    def collapse_row(self,y):
+            #after deleting the row, in the following row, find a column to collapse
+            if y < self.height: #can not do for bottom row
+                for x in range(self.width):
+                    if (x,y) not in self.grid:
+                        #found empty location,
+                        self.collapse_column(x,y)
+
                    
     def move_up_rows(self):
         ''' Moves all rows up one square.
@@ -570,6 +595,8 @@ class Board(object):
 
                 # move all rows down starting at row y - 1
                 self.move_down_rows(y - 1)
+
+                self.collapse_row(y+1)
 
 
     def game_over(self):
