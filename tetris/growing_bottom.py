@@ -21,8 +21,8 @@ import random
 
 my_BOARD_WIDTH = 10*3
 my_BOARD_HEIGHT = 40
-my_DELAY = 1000
-my_BOARD_MOVE_DELAY=2 # the board moves onve in each # timesteps
+my_DELAY = 100
+my_BOARD_MOVE_DELAY=20 # the board moves onve in each # timesteps
 
 ############################################################
 # BLOCK CLASS
@@ -540,12 +540,14 @@ class Board(object):
                         
 
     def collapse_row(self,y):
-            #after deleting the row, in the following row, find a column to collapse
-            if y < self.height: #can not do for bottom row
+        
+        #after deleting the row, in the following row, find a column to collapse
+        if y < self.height: #can not do for bottom row
                 for x in range(self.width):
                     if (x,y) not in self.grid:
                         #found empty location,
                         self.collapse_column(x,y)
+                        break # only collapse for once
 
                    
     def move_up_rows(self):
