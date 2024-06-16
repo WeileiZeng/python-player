@@ -901,10 +901,12 @@ class Tetris(object):
 
 
 
-#            'delete_row':'giftbox.mp3',
+
 soundfiles={'key':'menuselect.mp3',
-            'delete_row':'gift_short.mp3',
+            'delete_row':'giftbox.mp3',            
+#            'delete_row':'gift_short.mp3',
             }
+
 
 
 
@@ -915,7 +917,43 @@ class DJ():
     def __init__(self):
         # keep of record of previous thread
         self.thread0=None
+        self.sound0=None
+        
+    def play_after(self,thread0=None,soundfile='menuselect.mp3'):
+        # wait for previous thread to finish, then play
+        if thread0:            
+            #print('thread0.is_alive()',thread0.is_alive())
+            thread0.join()
+        playsound(soundfile)
+        #playsound('menuselect.mp3')
 
+    def play(self,sound='key'): #only play after previous sound
+        if self.thread0:
+            #print('self.thread0.is_alive()',self.thread0.is_alive())
+            if self.thread0.is_alive():
+                if sound == self.sound0:
+                    #skip for same sound
+                    return
+                else:
+                    #play different sound
+                    pass
+
+        # only play when previous sound is finished, or is different
+        soundfile = soundfiles[sound]
+        thread = threading.Thread(target=self.play_after, args=(self.thread0,soundfile,))
+        thread.start()
+        self.thread0=thread
+        self.sound0=sound
+
+# this DJ terminate previous sounds instead of waiting
+import multiprocessing as mp
+from multiprocessing import Process
+mp.set_start_method('fork')
+class DJ2():
+    def __init__(self):
+        # keep of record of previous thread
+        self.thread0=None
+        self.p0=None
     def play_after(self,thread0=None,soundfile='menuselect.mp3'):
         # wait for previous thread to finish, then play
         if thread0:
@@ -924,12 +962,25 @@ class DJ():
         #playsound('menuselect.mp3')
 
     def play(self,sound='key'): #only play after previous sound
+        if self.p0:
+            print('self.p0.is_alive()',self.p0.is_alive())                
+            if self.p0.is_alive():
+                self.p0.terminate()
+                print('self.p0.terminate()')
         soundfile = soundfiles[sound]
-        thread = threading.Thread(target=self.play_after, args=(self.thread0,soundfile,))
-        thread.start()
-        self.thread0=thread
+        #p = multiprocessing.Process(target=playsound, args=(soundfile,))
+        p = Process(target=playsound, args=(soundfile,))
+        p.start()
+        #input()
+        self.p0=p
+        print(self.p0)
+        print('end play()')
+        #thread = threading.Thread(target=self.play_after, args=(self.thread0,soundfile,))
+        #thread.start()
+        #self.thread0=thread
+        
 
-
+        
 
 ################################################################
 # Start the game
