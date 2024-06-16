@@ -437,6 +437,12 @@ class Board(object):
         self.grid = {}
         self.snake=Snake(self.width)
 
+        info = Text(Point(800, 30), "Score: ")
+        info.setSize(16)
+        info.draw(self.canvas)
+        self.info = info
+        self.num_deleted_rows=0
+        
 
     def draw_shape(self, shape):
         ''' Parameters: shape - type: Shape
@@ -516,6 +522,9 @@ class Board(object):
             self.grid[x, y].undraw()
             del self.grid[x, y]
 
+        # update score on screen
+        self.num_deleted_rows += 1
+        self.score()
 
         
  
@@ -650,7 +659,12 @@ class Board(object):
 
                 self.collapse_row(y+1)
 
-
+    def score(self):
+        '''Display game info
+        '''
+        s=f'Score: {self.num_deleted_rows}'
+        self.info.setText(s)
+                
     def game_over(self):
         ''' Display "Game Over !!!" message in the center of the board
         '''
