@@ -422,9 +422,10 @@ class Board(object):
                     the board; stores the blocks for a given position
     '''
     
-    def __init__(self, win, width, height):
+    def __init__(self, win, width, height, dj):
         self.width = width
         self.height = height
+        self.dj=dj #for playing sound while deleting row
 
         # create a canvas to draw the tetris shapes on
         self.canvas = CanvasFrame(win, self.width * Block.BLOCK_SIZE,
@@ -496,6 +497,9 @@ class Board(object):
         '''
         # remove all blocks in row y from the grid
         # and undraw them
+
+        #play sound
+        self.dj.play(sound='delete_row')
         
         #add animation here
         delay=1
@@ -678,8 +682,9 @@ class Tetris(object):
     BOARD_HEIGHT = my_BOARD_HEIGHT 
     BOARD_MOVE_DELAY = my_BOARD_MOVE_DELAY
     
-    def __init__(self, win):
-        self.board = Board(win, self.BOARD_WIDTH, self.BOARD_HEIGHT)
+    def __init__(self, win):        
+        self.dj = DJ() # sound control        
+        self.board = Board(win, self.BOARD_WIDTH, self.BOARD_HEIGHT, self.dj)
         self.win = win
         self.delay = my_DELAY # milliseconds
         self.board_move_delay = Tetris.BOARD_MOVE_DELAY
@@ -702,8 +707,7 @@ class Tetris(object):
         # animate the shape!
         self.animate_shape()
 
-        # sound control
-        self.dj = DJ()
+        
         
     def create_new_shape(self,index=-1): #-1 for random shape, 0 for I shape
         ''' Return value: type: Shape
@@ -897,6 +901,11 @@ class Tetris(object):
 
 
 
+#            'delete_row':'giftbox.mp3',
+soundfiles={'key':'menuselect.mp3',
+            'delete_row':'gift_short.mp3',
+            }
+
 
 
 from playsound import playsound
@@ -907,14 +916,16 @@ class DJ():
         # keep of record of previous thread
         self.thread0=None
 
-    def play_after(self,thread0=None):
+    def play_after(self,thread0=None,soundfile='menuselect.mp3'):
         # wait for previous thread to finish, then play
         if thread0:
             thread0.join()
-        playsound('menuselect.mp3')
+        playsound(soundfile)
+        #playsound('menuselect.mp3')
 
-    def play(self): #only play after previous sound
-        thread = threading.Thread(target=self.play_after, args=(self.thread0,))
+    def play(self,sound='key'): #only play after previous sound
+        soundfile = soundfiles[sound]
+        thread = threading.Thread(target=self.play_after, args=(self.thread0,soundfile,))
         thread.start()
         self.thread0=thread
 
