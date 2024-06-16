@@ -588,9 +588,10 @@ class Board(object):
 
 
                     
-    def collapse_column(self,x,y):
+    def _collapse_column(self,x,y):
         '''Collapse the column x for blocks above y
-        '''
+           Move blocks one by one
+        '''        
         for i in range(y):
             yy = y-i  #check from this row and up
             if (x,yy) in self.grid:
@@ -604,6 +605,39 @@ class Board(object):
                     block.move(0, 1)
                     self.grid[(x, yy + 1)] = block
                     yy = yy+1
+                    
+    def collapse_column(self,x,y):
+        '''Collapse the column x for blocks above y
+           Move all blocks at the same time
+        '''
+        flag_moved=False
+        first_move=True
+        while True:
+            for i in range(y):
+                yy = y-i  #check from this row and up
+                if (x,yy) in self.grid:
+                    #move it down
+                    if self.can_move(x,yy+1):
+                        if first_move:
+                            
+                            first_move=False
+                        #print(f'moved {(x,yy)} to {(x,yy+1)}')
+                        block = self.grid[(x, yy)]
+                        del self.grid[(x, yy)]
+                        block.move(0, 1)
+                        self.grid[(x, yy + 1)] = block
+                        flag_moved = True
+                
+            if not flag_moved:
+                # end if nothing can be moved
+                break
+            else:
+                # some blocks has been moved, animate it
+                _delay = 100
+                self.canvas.after(_delay,self.canvas.flush())
+                flag_moved=False
+
+                        #yy = yy+1
                         
 
     def collapse_row(self,y):
