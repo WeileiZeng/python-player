@@ -17,12 +17,18 @@ from graphics import *
 import random
 
 
+
+############################################################
 # CONFIG
+############################################################
 
 my_BOARD_WIDTH = 10*8
 my_BOARD_HEIGHT = 64 #112
-my_DELAY = 100
-my_BOARD_MOVE_DELAY=20 # the board moves onve in each # timesteps
+my_DELAY = 100   #game frame speed in milliseconds
+my_BOARD_MOVE_DELAY=20 # the board moves once in each # timesteps
+
+my_BLOCK_SIZE = 12 #7 #30
+my_OUTLINE_WIDTH = 2 #1 #3
 
 ############################################################
 # BLOCK CLASS
@@ -38,8 +44,8 @@ class Block(Rectangle):
         in terms of the square grid.
     '''
 
-    BLOCK_SIZE = 12 #7 #30
-    OUTLINE_WIDTH = 2 #1 #3
+    BLOCK_SIZE = my_BLOCK_SIZE #12 #7 #30
+    OUTLINE_WIDTH = my_OUTLINE_WIDTH #2 #1 #3
 
     def __init__(self, pos, color):
         self.x = pos.x
@@ -116,17 +122,11 @@ class Shape(object):
                 left = pos.x
             if pos.x > right:
                 right = pos.x
-        #p1=Point(left *Block.BLOCK_SIZE + Block.OUTLINE_WIDTH, 0)
-        #p2=Point((right+1) * Block.BLOCK_SIZE + Block.OUTLINE_WIDTH, my_BOARD_HEIGHT * Block.BLOCK_SIZE)
-        #self.ref_lines=Rectangle(p1,p2)
-        #self.ref_lines.setFill('yellow')
-
-
                 
     def ref_draw(self,board):
-        #add reference block
-
-        #get coords
+        '''Add reference block in targeted position at bottom. Update when move left or right
+        '''
+        #get coords and duplicate the shape with transparent color (no Fill)
         coords=[]
         for block in self.blocks:
             coords.append(Point(block.x,block.y))        
@@ -134,11 +134,14 @@ class Shape(object):
         for block in self.ref_shape.blocks:
             block.setWidth(Block.OUTLINE_WIDTH*2)
             block.setFill(None)
+        # move the ref block to the bottom
         while self.ref_shape.can_move(board, 0, 1):
             self.ref_shape.move(0, 1)
         self.ref_shape.draw(board.canvas)
             
     def ref_undraw(self):
+        '''Undraw the ref shape
+        '''
         for block in self.ref_shape.blocks:
             block.undraw()
     
@@ -162,7 +165,6 @@ class Shape(object):
         for block in self.blocks:
             block.undraw()
         self.ref_undraw()
-        #self.ref_shape.undraw()
 
     def move(self, dx, dy):
         ''' Parameters: dx - type: int
@@ -347,30 +349,35 @@ class Z_shape(Shape):
 
 
 class Snake():
-    '''helper class to generate the bottom row
-       create a connected lines, just like a snake
+    '''Helper class to generate the bottom row
+       Create a connected line, just like a snake
     '''
     def __init__(self,width,length=-1):
-        self.width=width #int
-        if length==-1:
-            #self.length = self.width//2
-            self.length = 8
-            
+        self.width=width #int, width of the board
+        if length==-1:   #the length of the allowed center region to generate the crack/snake
+            #self.length = self.width//3
+            self.length = 8            
         else:
             self.length=length
+        # left and right boundary of the center region
         self.left = (self.width-self.length)//2
         self.right = self.left + self.length        
-        self.snake=[]
-        self.snake=[[0,10,0],[1,10,-1],[1,9,-1],[1,8,-1],[1,7,0]]
-        self.snake=[[0, 10, 0], [1, 10, -1], [1, 9, -1], [1, 8, -1], [1, 7, 0], [2, 7, -1], [2, 6, 0], [3, 6, 0], [4, 6, 1], [4, 7, 0], [5, 7, 0], [6, 7, 1], [6, 8, 0], [7, 8, 0], [8, 8, 0], [9, 8, 0], [10, 8, 0], [11, 8, 1], [11, 9, 1], [11, 10, 0], [12, 10, 1], [12, 11, 0], [13, 11, 0]]
+        #self.snake=[]
+        #self.snake=[[0,10,0],[1,10,-1],[1,9,-1],[1,8,-1],[1,7,0]]
+        #self.snake=[[0, 10, 0], [1, 10, -1], [1, 9, -1], [1, 8, -1], [1, 7, 0], [2, 7, -1], [2, 6, 0], [3, 6, 0], [4, 6, 1], [4, 7, 0], [5, 7, 0], [6, 7, 1], [6, 8, 0], [7, 8, 0], [8, 8, 0], [9, 8, 0], [10, 8, 0], [11, 8, 1], [11, 9, 1], [11, 10, 0], [12, 10, 1], [12, 11, 0], [13, 11, 0]]
+        # snake saves all the empty postion in the crack/snake
         self.snake=[[46, 38, 1], [46, 39, 1], [46, 40, 0], [47, 40, 0], [48, 40, -1], [48, 39, -1], [48, 38, 0], [49, 38, 0], [50, 38, 1], [50, 39, 0]]
-        # (x,y,direction)
-        # 0 for up, -1 for left, 1 for right
-
+        # tuple format: (x,y,direction)
+        # Direction: 0 for up, -1 for left, 1 for right
         print(f'Snake: left {self.left} right {self.right}, width {self.width}')
 
     def next(self):
-        def next_point(p2,p3): #get new point based on historical route
+        '''Return a list of empty sites in the next (new bottom) row
+           The list will be appended into self.snake
+        '''
+        def next_point(p2,p3):
+            '''Return a new point based on historical route
+            '''
             p4=[0,0,0]
             allowed_directions=[-1,0,1]
 
@@ -379,23 +386,25 @@ class Snake():
                 allowed_directions.remove(1)
             elif p3[1] < self.left:
                 allowed_directions.remove(-1)
-                
-            if p3[2] == 0: #move up
-                p4[0] = p3[0] + 1 #add one row
+
+            # constraint from previous moving direction
+            if p3[2] == 0: #was moving up
+                p4[0] = p3[0] + 1 #add row index by one
                 p4[1] = p3[1]                
                 if p2[2] !=0:
                     try:
-                        allowed_directions.remove(-p2[2]) #can not move back immedeately
+                        allowed_directions.remove(-p2[2]) #can not move back immediately
                     except:
                         pass
-            else: #move left or right
+            else: # was moving left or right
                 p4[0] = p3[0] #same row
                 p4[1] = p3[1] + p3[2]
                 try:
                     allowed_directions.remove(-p3[2])   # can not move back
                 except:
                     pass
-            import random                
+
+            # random output in allowed directions
             p4[2] = random.choice(allowed_directions)
             return p4
         empties=[]
@@ -405,7 +414,8 @@ class Snake():
             empties.append(p[1])
             if p[2] == 0: # if move up, then this row is finished
                 break
-        #print(self.snake)
+            # otherwise continue to generate new point
+        #print(self.snake)  # print to get samples
         return empties
 
 ############################################################
@@ -437,11 +447,14 @@ class Board(object):
         self.grid = {}
         self.snake=Snake(self.width)
 
+        # text to display game info
         info = Text(Point(800, 30), "Score: ")
         info.setSize(16)
         info.draw(self.canvas)
         self.info = info
-        self.num_deleted_rows=0
+        
+        # record num of rows being deleted
+        self.num_deleted_rows=0  
         
 
     def draw_shape(self, shape):
@@ -576,19 +589,21 @@ class Board(object):
 
                     
     def collapse_column(self,x,y):
-            for i in range(y):
-                yy = y-i  #check from this row and up
-                if (x,yy) in self.grid:
-                    #move it down
-                    while self.can_move(x,yy+1):
-                        _delay = 5
-                        self.canvas.after(_delay,self.canvas.flush())
-                        #print(f'moved {(x,yy)} to {(x,yy+1)}')
-                        block = self.grid[(x, yy)]
-                        del self.grid[(x, yy)]
-                        block.move(0, 1)
-                        self.grid[(x, yy + 1)] = block
-                        yy = yy+1
+        '''Collapse the column x for blocks above y
+        '''
+        for i in range(y):
+            yy = y-i  #check from this row and up
+            if (x,yy) in self.grid:
+                #move it down
+                while self.can_move(x,yy+1):
+                    _delay = 5
+                    self.canvas.after(_delay,self.canvas.flush())
+                    #print(f'moved {(x,yy)} to {(x,yy+1)}')
+                    block = self.grid[(x, yy)]
+                    del self.grid[(x, yy)]
+                    block.move(0, 1)
+                    self.grid[(x, yy + 1)] = block
+                    yy = yy+1
                         
 
     def collapse_row(self,y):
