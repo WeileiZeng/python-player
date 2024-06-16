@@ -635,21 +635,21 @@ class Board(object):
 
 
     def collapse_row(self,y):
+        '''For empty sites at row y, collapse the column
+        '''
         start_collapse=False
         #after deleting the row, in the following row, find a column to collapse
         if y < self.height: #can not do for bottom row
                 for x in range(self.width):
                     if (x,y) not in self.grid:
-                        #found empty location,
+                        #found empty location
                         self.collapse_column(x,y)
                         start_collapse=True
                         #break # only collapse for once
-                    else: # only continue collapsing for neighboring empty sites, and stops once reace an actual block
+                    else: # only continue collapsing for neighboring empty sites, and stops once reace an actual block. It looks like this is always the case
                         if start_collapse==True:
                             break
                         
-
-                   
     def move_up_rows(self):
         ''' Moves all rows up one square.
 
@@ -667,18 +667,17 @@ class Board(object):
         self.grid = new_grid            
 
     def create_new_bottom(self):
-        '''after moving board up, generate a new row in the bottom
+        '''After moving board up, generate a new row in the bottom
         '''
+        # Get empty sites in the new bottom row
         empties = self.snake.next()
-        print(empties)
+        #print(empties)
         for x in range(Tetris.BOARD_WIDTH):
             if x not in empties:
                 pos=Point(x,Tetris.BOARD_HEIGHT-1)
                 block=Block(pos, color='yellow')
                 block.draw(self.canvas)
                 self.grid[(pos.x,pos.y)]=block
-                #print(self.grid)
-            
         
     def remove_complete_rows(self):
         ''' Removes all the complete rows
@@ -700,6 +699,7 @@ class Board(object):
                 # move all rows down starting at row y - 1
                 self.move_down_rows(y - 1)
 
+                # check the next row and collapse column with empty site
                 self.collapse_row(y+1)
 
     def score(self):
@@ -815,7 +815,6 @@ class Tetris(object):
         '''
         if not self.paused:
             self.do_move('Down')
-            #pass
         self.win.after(self.delay, self.animate_shape)
    
  
@@ -863,15 +862,12 @@ class Tetris(object):
             # if the last failed move was Down
             if direction == 'Down':
 
-                # clear previous ref
+                # clear previous ref shape in the bottom
                 self.current_shape.ref_undraw()
                 
                 # add the current shape to the board
                 self.board.add_shape(self.current_shape)
 
-                # undraw the reference line
-                #self.current_shape.ref_lines.undraw()
-                
                 # remove completed rows (if any)
                 self.board.remove_complete_rows()
 
@@ -879,9 +875,8 @@ class Tetris(object):
                 # update Tetris.current_shape with a new random shape
                 self.current_shape = self.create_new_shape()
 
-                # add new ref
+                # update new ref shape
                 self.current_shape.ref_draw(self.board)
-                #self.current_shape.ref_draw(self.board,self.win)
                 
                 # draw the new shape on the board
                 # if not possible, then the game is over
@@ -914,7 +909,8 @@ class Tetris(object):
         key = event.keysym
         #print key   # for debugging
 
-        if not self.paused:            
+        if not self.paused:
+            # play sound for key event
             self.dj.play()
 
             # move left, right, and down
@@ -951,32 +947,34 @@ class Tetris(object):
         # pause and unpause the game
         if key == 'p' or key == 'P':
             self.paused = not self.paused
+            # display the status in window title
             if self.paused:
                 self.win.title('Tetris  Paused')
             else:
                 self.win.title('Tetris')
 
 
-
-
+# filename for the sound                
 soundfiles={'key':'menuselect.mp3',
             'delete_row':'giftbox.mp3',            
 #            'delete_row':'gift_short.mp3',
             }
 
-
-
-
 from playsound import playsound
 import threading
-# The DJ to control all sound
+
 class DJ():
+    '''The DJ to control all sound
+    '''
     def __init__(self):
         # keep an record of previous thread and sound
         self.thread0=None
         self.sound0=None
-        
+
+    
     def play_after(self,thread0=None,soundfile='menuselect.mp3'):
+        '''Function to be called in a thread to play the sound
+        '''
         # wait for previous thread to finish, then play
         if thread0:            
             #print('thread0.is_alive()',thread0.is_alive())
