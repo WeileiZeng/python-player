@@ -702,7 +702,9 @@ class Tetris(object):
         # animate the shape!
         self.animate_shape()
 
-
+        # sound control
+        self.dj = DJ()
+        
     def create_new_shape(self,index=-1): #-1 for random shape, 0 for I shape
         ''' Return value: type: Shape
             
@@ -851,7 +853,9 @@ class Tetris(object):
         key = event.keysym
         #print key   # for debugging
 
-        if not self.paused:
+        if not self.paused:            
+            self.dj.play()
+
             # move left, right, and down
             #if key in self.DIRECTION: 
             if key in ['Left','Right']: #not down anymore                
@@ -890,7 +894,32 @@ class Tetris(object):
                 self.win.title('Tetris  Paused')
             else:
                 self.win.title('Tetris')
-       
+
+
+
+
+
+from playsound import playsound
+import threading
+# The DJ to control all sound
+class DJ():
+    def __init__(self):
+        # keep of record of previous thread
+        self.thread0=None
+
+    def play_after(self,thread0=None):
+        # wait for previous thread to finish, then play
+        if thread0:
+            thread0.join()
+        playsound('menuselect.mp3')
+
+    def play(self): #only play after previous sound
+        thread = threading.Thread(target=self.play_after, args=(self.thread0,))
+        thread.start()
+        self.thread0=thread
+
+
+
 ################################################################
 # Start the game
 ################################################################
