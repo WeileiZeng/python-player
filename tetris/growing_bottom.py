@@ -30,6 +30,9 @@ my_BOARD_MOVE_DELAY=20 # the board moves once in each # timesteps
 my_BLOCK_SIZE = 12 #7 #30
 my_OUTLINE_WIDTH = 2 #1 #3
 
+
+COLUMN_COLOR = (['cyan']*5+['grey']*5)*8   #preset color for each column
+
 ############################################################
 # BLOCK CLASS
 ############################################################
@@ -675,7 +678,8 @@ class Board(object):
         for x in range(Tetris.BOARD_WIDTH):
             if x not in empties:
                 pos=Point(x,Tetris.BOARD_HEIGHT-1)
-                block=Block(pos, color='yellow')
+                #block=Block(pos, color='yellow')
+                block=Block(pos, color=COLUMN_COLOR[x]) #assign color according to preset value in CONFIG
                 block.draw(self.canvas)
                 self.grid[(pos.x,pos.y)]=block
         
