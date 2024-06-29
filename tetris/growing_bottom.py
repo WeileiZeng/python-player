@@ -458,7 +458,15 @@ class Board(object):
         
         # record num of rows being deleted
         self.num_deleted_rows=0  
-        
+
+        # show instruction:
+        _help_text="LEFT/RIGHT: move, UP: rotate, DOWN: drop"
+        _help = Text(Point(160, 20), _help_text)
+        _help.setSize(16)
+        _help.draw(self.canvas)
+        _=Text(Point(140, 40), "SPACE/m: magic block, A: grow bottom")
+        _.setSize(16)
+        _.draw(self.canvas)
 
     def draw_shape(self, shape):
         ''' Parameters: shape - type: Shape
