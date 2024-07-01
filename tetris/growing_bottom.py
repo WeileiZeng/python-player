@@ -22,6 +22,8 @@ import random
 # CONFIG
 ############################################################
 
+
+# normal mode on Air 15
 my_BOARD_WIDTH = 10*8
 my_BOARD_HEIGHT = 64 #112
 my_DELAY = 100   #game frame speed in milliseconds
@@ -31,7 +33,13 @@ my_BLOCK_SIZE = 12 #7 #30
 my_OUTLINE_WIDTH = 2 #1 #3
 
 
-COLUMN_COLOR = (['cyan']*5+['grey']*5)*8   #preset color for each column
+COLUMN_COLOR = (['cyan']*5+['grey']*5)*8*2   #preset color for each column
+
+# giant board
+my_BOARD_WIDTH = 10*16
+my_BOARD_HEIGHT = 110 #112
+my_BLOCK_SIZE = 7
+my_OUTLINE_WIDTH = 1
 
 ############################################################
 # BLOCK CLASS
