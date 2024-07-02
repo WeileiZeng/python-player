@@ -52,6 +52,15 @@ if True:
     my_BLOCK_SIZE = 18
     my_OUTLINE_WIDTH = 2
 
+if True:
+    my_COLUMN_HEIGHT = 42
+    my_COLUMNS = 2
+    my_BOARD_HEIGHT = my_COLUMN_HEIGHT * my_COLUMNS
+    my_BOARD_WIDTH = 10*4
+    #my_BOARD_HEIGHT = 30
+    my_BLOCK_SIZE = 16
+    my_OUTLINE_WIDTH = 2    
+
 
     
 ############################################################
@@ -83,7 +92,7 @@ class Block(Rectangle):
 
 
         if self.y > my_COLUMN_HEIGHT:
-            # shift one column 
+            # shift one column to the right
             p1 = Point((pos.x+my_BOARD_WIDTH)*Block.BLOCK_SIZE + Block.OUTLINE_WIDTH,
                        (pos.y-my_COLUMN_HEIGHT)*Block.BLOCK_SIZE + Block.OUTLINE_WIDTH)
             p2 = Point(p1.x + Block.BLOCK_SIZE, p1.y + Block.BLOCK_SIZE)
@@ -123,12 +132,13 @@ class Block(Rectangle):
         self.y += dy
 
         shift_x = my_BOARD_WIDTH * Block.BLOCK_SIZE
-        shift_y = my_COLUMN_HEIGHT * Block.BLOCK_SIZE
-        if self.y == my_COLUMN_HEIGHT and dy > 0:
+        shift_y = (my_COLUMN_HEIGHT-1) * Block.BLOCK_SIZE
+        if self.y == my_COLUMN_HEIGHT - 2 and dy > 0:
             Rectangle.move(self, shift_x, -shift_y) # shift right
-        elif self.y == my_COLUMN_HEIGHT + 1 and dy < 0:
+        elif self.y == my_COLUMN_HEIGHT - 1 and dy < 0:
             Rectangle.move(self, -shift_x, shift_y) # shift left
-        Rectangle.move(self, dx*Block.BLOCK_SIZE, dy*Block.BLOCK_SIZE)
+        else:
+            Rectangle.move(self, dx*Block.BLOCK_SIZE, dy*Block.BLOCK_SIZE)
 
 
 ############################################################
@@ -484,7 +494,7 @@ class Board(object):
 
         # create a canvas to draw the tetris shapes on
         self.canvas = CanvasFrame(win, self.width * Block.BLOCK_SIZE*2,
-                                        self.height * Block.BLOCK_SIZE/2)
+                                        (self.height/2+3) * Block.BLOCK_SIZE)
         self.canvas.setBackground('light gray')
 
         # create an empty dictionary
