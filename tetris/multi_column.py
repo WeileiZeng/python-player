@@ -36,14 +36,33 @@ my_OUTLINE_WIDTH = 2 #1 #3
 COLUMN_COLOR = (['cyan']*5+['grey']*5)*8*2   #preset color for each column
 
 # giant board
-my_BOARD_WIDTH = 10*16
-my_BOARD_HEIGHT = 110 #112
-my_BLOCK_SIZE = 7
-my_OUTLINE_WIDTH = 1
+if False:
+    my_BOARD_WIDTH = 10*16
+    my_BOARD_HEIGHT = 110 #112
+    my_BLOCK_SIZE = 7
+    my_OUTLINE_WIDTH = 1
 
+#small board
+if True:
+    my_COLUMN_HEIGHT = 10*2
+    my_COLUMNS = 2
+    my_BOARD_HEIGHT = my_COLUMN_HEIGHT * my_COLUMNS
+    my_BOARD_WIDTH = 10*2
+    #my_BOARD_HEIGHT = 30
+    my_BLOCK_SIZE = 18
+    my_OUTLINE_WIDTH = 2
+
+
+    
 ############################################################
 # BLOCK CLASS
 ############################################################
+
+def xy2column(pos):
+    pass
+def transform_p(p):
+    columns=2
+    y = p.y % my_BPARD_HEIGHT
 
 class Block(Rectangle):
     ''' Block class:
@@ -61,10 +80,19 @@ class Block(Rectangle):
     def __init__(self, pos, color):
         self.x = pos.x
         self.y = pos.y
-        
-        p1 = Point(pos.x*Block.BLOCK_SIZE + Block.OUTLINE_WIDTH,
-                   pos.y*Block.BLOCK_SIZE + Block.OUTLINE_WIDTH)
-        p2 = Point(p1.x + Block.BLOCK_SIZE, p1.y + Block.BLOCK_SIZE)
+
+
+        if self.y > my_COLUMN_HEIGHT:
+            # shift one column 
+            p1 = Point((pos.x+my_BOARD_WIDTH)*Block.BLOCK_SIZE + Block.OUTLINE_WIDTH,
+                       (pos.y-my_COLUMN_HEIGHT)*Block.BLOCK_SIZE + Block.OUTLINE_WIDTH)
+            p2 = Point(p1.x + Block.BLOCK_SIZE, p1.y + Block.BLOCK_SIZE)
+        else:
+            p1 = Point(pos.x*Block.BLOCK_SIZE + Block.OUTLINE_WIDTH,
+                       pos.y*Block.BLOCK_SIZE + Block.OUTLINE_WIDTH)
+            p2 = Point(p1.x + Block.BLOCK_SIZE, p1.y + Block.BLOCK_SIZE)
+
+
 
         Rectangle.__init__(self, p1, p2)
         self.setWidth(Block.OUTLINE_WIDTH)
@@ -94,6 +122,12 @@ class Block(Rectangle):
         self.x += dx
         self.y += dy
 
+        shift_x = my_BOARD_WIDTH * Block.BLOCK_SIZE
+        shift_y = my_COLUMN_HEIGHT * Block.BLOCK_SIZE
+        if self.y == my_COLUMN_HEIGHT and dy > 0:
+            Rectangle.move(self, shift_x, -shift_y) # shift right
+        elif self.y == my_COLUMN_HEIGHT + 1 and dy < 0:
+            Rectangle.move(self, -shift_x, shift_y) # shift left
         Rectangle.move(self, dx*Block.BLOCK_SIZE, dy*Block.BLOCK_SIZE)
 
 
@@ -449,7 +483,7 @@ class Board(object):
         self.dj=dj #for playing sound while deleting row
 
         # create a canvas to draw the tetris shapes on
-        self.canvas = CanvasFrame(win, self.width * Block.BLOCK_SIZE,
+        self.canvas = CanvasFrame(win, self.width * Block.BLOCK_SIZE*2,
                                         self.height * Block.BLOCK_SIZE)
         self.canvas.setBackground('light gray')
 
