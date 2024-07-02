@@ -409,9 +409,9 @@ class Snake():
         self.right = self.left + self.length        
         #self.snake=[]
         #self.snake=[[0,10,0],[1,10,-1],[1,9,-1],[1,8,-1],[1,7,0]]
-        #self.snake=[[0, 10, 0], [1, 10, -1], [1, 9, -1], [1, 8, -1], [1, 7, 0], [2, 7, -1], [2, 6, 0], [3, 6, 0], [4, 6, 1], [4, 7, 0], [5, 7, 0], [6, 7, 1], [6, 8, 0], [7, 8, 0], [8, 8, 0], [9, 8, 0], [10, 8, 0], [11, 8, 1], [11, 9, 1], [11, 10, 0], [12, 10, 1], [12, 11, 0], [13, 11, 0]]
+        self.snake=[[0, 10, 0], [1, 10, -1], [1, 9, -1], [1, 8, -1], [1, 7, 0], [2, 7, -1], [2, 6, 0], [3, 6, 0], [4, 6, 1], [4, 7, 0], [5, 7, 0], [6, 7, 1], [6, 8, 0], [7, 8, 0], [8, 8, 0], [9, 8, 0], [10, 8, 0], [11, 8, 1], [11, 9, 1], [11, 10, 0], [12, 10, 1], [12, 11, 0], [13, 11, 0]]
         # snake saves all the empty postion in the crack/snake
-        self.snake=[[46, 38, 1], [46, 39, 1], [46, 40, 0], [47, 40, 0], [48, 40, -1], [48, 39, -1], [48, 38, 0], [49, 38, 0], [50, 38, 1], [50, 39, 0]]
+        #self.snake=[[46, 38, 1], [46, 39, 1], [46, 40, 0], [47, 40, 0], [48, 40, -1], [48, 39, -1], [48, 38, 0], [49, 38, 0], [50, 38, 1], [50, 39, 0]]
         # tuple format: (x,y,direction)
         # Direction: 0 for up, -1 for left, 1 for right
         print(f'Snake: left {self.left} right {self.right}, width {self.width}')
@@ -484,7 +484,7 @@ class Board(object):
 
         # create a canvas to draw the tetris shapes on
         self.canvas = CanvasFrame(win, self.width * Block.BLOCK_SIZE*2,
-                                        self.height * Block.BLOCK_SIZE)
+                                        self.height * Block.BLOCK_SIZE/2)
         self.canvas.setBackground('light gray')
 
         # create an empty dictionary
